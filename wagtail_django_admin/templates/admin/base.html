@@ -17,7 +17,7 @@
     width: 100%;
 }
 header, header a {
-        color: inherit;
+    color: inherit;
 }
 header {
     background-color: inherit;
@@ -29,18 +29,40 @@ input[type=checkbox]:before {
     content: inherit;
 }
 .halloeditor, .tagit, input:not([type=submit]), select, textarea {
-    width: auto;
+    width: 100%;
     appearance: inherit;
 }
 
 header#grp-header {
     z-index: 50;
 }
+
 table.grp-table.grp-sortable thead th.sortable {
     position: relative;
     z-index: 50;
 }
 
+.nav-search {
+    font-family: Open Sans,Arial,sans-serif;
+    font-size: 85%;
+}
+
+#menu-search-q {
+    padding: .8em 2.5em .8em 1em;
+    height: auto;
+    font-size: 1em;
+    background: inherit;
+    border-radius: 0px;
+}
+
+select {
+    width: auto;
+}
+
+.grp-fixed-footer {
+    left: 200px;
+    width: 85vw;
+}
 </style>
 {% endblock %}
 

@@ -1,4 +1,5 @@
 from django.utils.translation import ugettext_lazy as _
+from django.conf import settings
 
 from wagtail.core import hooks
 from wagtail.admin.menu import MenuItem, SubmenuMenuItem, Menu
@@ -54,27 +55,44 @@ class CustomMenuItem(MenuItem):
 
 for app in app_list:
     app_name = str(app["app_label"])
-    wagtail_django_admin_menu = {}
-    wagtail_django_admin_menu = Menu(
-        register_hook_name="register_wagtail_django_admin_menu_item" + (app_name),
-        construct_hook_name="construct_main_menu",
-    )
-
-    @hooks.register("register_admin_menu_item")
-    def register_wagtail_django_admin_menu(
-        app_name=app_name, wagtail_django_admin_menu=wagtail_django_admin_menu
-    ):
-
-        return CustomSubmenuMenuItem(
-            app_name, wagtail_django_admin_menu, icon_name="folder-inverse", order=10000
+    if (
+        hasattr(settings, "WAGTAIL_ADMIN_CUSTOM_MENU")
+        and type(settings.WAGTAIL_ADMIN_CUSTOM_MENU) is dict
+        and app_name in settings.WAGTAIL_ADMIN_CUSTOM_MENU.keys()
+    ) or not hasattr(settings, "WAGTAIL_ADMIN_CUSTOM_MENU"):
+        wagtail_django_admin_menu = Menu(
+            register_hook_name="register_wagtail_django_admin_menu_item" + app_name,
+            construct_hook_name="construct_main_menu",
         )
 
-    for model in app["models"]:
-        model_name = model["name"]
-        admin_url = model["admin_url"]
+        @hooks.register("register_admin_menu_item")
+        def register_wagtail_django_admin_menu(
+            app_name=app_name, wagtail_django_admin_menu=wagtail_django_admin_menu
+        ):
 
-        @hooks.register("register_wagtail_django_admin_menu_item" + app_name)
-        def register_users_menu_item(model_name=model_name, admin_url=admin_url):
-            return CustomMenuItem(
-                model_name, admin_url, icon_name="folder-inverse", order=10000
+            return CustomSubmenuMenuItem(
+                app_name,
+                wagtail_django_admin_menu,
+                icon_name="folder-inverse",
+                order=10000,
             )
+
+        for model in app["models"]:
+            model_name = str(model["model_name"])
+            admin_url = model["admin_url"]
+            if (
+                hasattr(settings, "WAGTAIL_ADMIN_CUSTOM_MENU")
+                and type(settings.WAGTAIL_ADMIN_CUSTOM_MENU) is dict
+                and app_name in settings.WAGTAIL_ADMIN_CUSTOM_MENU.keys()
+                and type(settings.WAGTAIL_ADMIN_CUSTOM_MENU[app_name]) is list
+                and model_name in settings.WAGTAIL_ADMIN_CUSTOM_MENU[app_name]
+            ) or not hasattr(settings, "WAGTAIL_ADMIN_CUSTOM_MENU"):
+
+                @hooks.register("register_wagtail_django_admin_menu_item" + app_name)
+                def register_users_menu_item(
+                    model_name=model_name, admin_url=admin_url
+                ):
+                    item = CustomMenuItem(
+                        model_name, admin_url, icon_name="folder-inverse", order=10000
+                    )
+                    return item
