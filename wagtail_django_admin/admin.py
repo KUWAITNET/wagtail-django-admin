@@ -1,5 +1,5 @@
 from django.utils.translation import ugettext_lazy as _
-from django.conf import settings
+from django.conf import settings as django_settings
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin, Group, GroupAdmin
 from django.contrib.auth import get_user_model
@@ -107,11 +107,13 @@ app_list = get_app_list(context={"request": None})
 
 for app in app_list:
     app_name = str(app["app_label"])
+    WAGTAIL_ADMIN_CUSTOM_MENU = getattr(django_settings, "WAGTAIL_ADMIN_CUSTOM_MENU", {})
+    all_apps = WAGTAIL_ADMIN_CUSTOM_MENU.keys()
     if (
-        hasattr(settings, "WAGTAIL_ADMIN_CUSTOM_MENU")
-        and type(settings.WAGTAIL_ADMIN_CUSTOM_MENU) is dict
-        and app_name in settings.WAGTAIL_ADMIN_CUSTOM_MENU.keys()
-    ) or not hasattr(settings, "WAGTAIL_ADMIN_CUSTOM_MENU"):
+        hasattr(django_settings, "WAGTAIL_ADMIN_CUSTOM_MENU")
+        and type(django_settings.WAGTAIL_ADMIN_CUSTOM_MENU) is dict
+        and app_name in all_apps
+    ) or not hasattr(django_settings, "WAGTAIL_ADMIN_CUSTOM_MENU"):
         wagtail_django_admin_menu = Menu(
             register_hook_name="register_wagtail_django_admin_menu_item" + app_name,
             construct_hook_name="construct_main_menu",
@@ -133,12 +135,18 @@ for app in app_list:
             model_name = str(model["model_name"])
             admin_url = model["admin_url"]
             if (
-                hasattr(settings, "WAGTAIL_ADMIN_CUSTOM_MENU")
-                and type(settings.WAGTAIL_ADMIN_CUSTOM_MENU) is dict
-                and app_name in settings.WAGTAIL_ADMIN_CUSTOM_MENU.keys()
-                and type(settings.WAGTAIL_ADMIN_CUSTOM_MENU[app_name]) is list
-                and model_name in settings.WAGTAIL_ADMIN_CUSTOM_MENU[app_name]
-            ) or not hasattr(settings, "WAGTAIL_ADMIN_CUSTOM_MENU"):
+                hasattr(django_settings, "WAGTAIL_ADMIN_CUSTOM_MENU")
+                and type(django_settings.WAGTAIL_ADMIN_CUSTOM_MENU) is dict
+                and app_name in django_settings.WAGTAIL_ADMIN_CUSTOM_MENU.keys()
+                and type(django_settings.WAGTAIL_ADMIN_CUSTOM_MENU[app_name]) is list
+                and model_name in django_settings.WAGTAIL_ADMIN_CUSTOM_MENU[app_name]
+            ) or not hasattr(django_settings, "WAGTAIL_ADMIN_CUSTOM_MENU") or (
+                hasattr(django_settings, "WAGTAIL_ADMIN_CUSTOM_MENU")
+                and type(django_settings.WAGTAIL_ADMIN_CUSTOM_MENU) is dict
+                and app_name in django_settings.WAGTAIL_ADMIN_CUSTOM_MENU.keys()
+                and type(django_settings.WAGTAIL_ADMIN_CUSTOM_MENU[app_name]) is list
+                and not django_settings.WAGTAIL_ADMIN_CUSTOM_MENU[app_name]
+            ):
 
                 @hooks.register("register_wagtail_django_admin_menu_item" + app_name)
                 def register_users_menu_item(

@@ -6,7 +6,7 @@ javascript_catalog = JavaScriptCatalog.as_view()
 
 
 
-app_name = 'jet'
+app_name = 'wagtail_django_admin'
 
 urlpatterns = [
     url(

@@ -1,6 +1,5 @@
 {% load wagtailadmin_tags %}
-
-{% if has_permission %}
+{% if has_permission or request.user.is_superuser %}
 <li class="menu-item{% if active %} menu-active{% endif %}">
     <a href="{{ url }}"
        class="{{ classnames }}"

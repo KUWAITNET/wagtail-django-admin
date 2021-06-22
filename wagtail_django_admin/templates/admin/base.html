@@ -105,7 +105,7 @@ body {
 
 {% block js %}
     {{ block.super }}
-<script type="text/javascript" src="{% url 'jet:jsi18n' %}"></script>
+<script type="text/javascript" src="{% url 'wagtail_django_admin:jsi18n' %}"></script>
 <script src="{% static 'admin/js/jquery.min.js' %}"></script>
 <script src="{% static "admin/js/jquery.init.js" as url %}{{ url|jet_append_version }}"></script>
 <script src="{% static "jet/js/bundle.min.js" as url %}{{ url|jet_append_version }}"></script>

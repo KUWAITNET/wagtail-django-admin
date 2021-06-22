@@ -1,14 +1,6 @@
 from django.conf import settings
 from django.utils.module_loading import import_string
 
-# Theme
-JET_DEFAULT_THEME = getattr(settings, 'JET_DEFAULT_THEME', 'default')
-JET_THEMES = getattr(settings, 'JET_THEMES', [])
-
-# Side menu
-JET_SIDE_MENU_COMPACT = getattr(settings, 'JET_SIDE_MENU_COMPACT', False)
-JET_SIDE_MENU_ITEMS = getattr(settings, 'JET_SIDE_MENU_ITEMS', None)
-JET_SIDE_MENU_CUSTOM_APPS = getattr(settings, 'JET_SIDE_MENU_CUSTOM_APPS', None)
 
 # Improved usability
 JET_CHANGE_FORM_SIBLING_LINKS = getattr(settings, 'JET_CHANGE_FORM_SIBLING_LINKS', True)
@@ -19,12 +11,12 @@ TABULAR_PERMISSIONS_CONFIG = {
         'override': False,
         'apps': [],
         'models': [],
-        'function':'jet.helpers.dummy_permissions_exclude'
+        'function':'wagtail_django_admin.helpers.dummy_permissions_exclude'
     },
     'auto_implement': True,
     'use_for_concrete': True,
-    'custom_permission_translation': 'jet.helpers.custom_permissions_translator',
-    'apps_customization_func': 'jet.helpers.apps_customization_func',
+    'custom_permission_translation': 'wagtail_django_admin.helpers.custom_permissions_translator',
+    'apps_customization_func': 'wagtail_django_admin.helpers.apps_customization_func',
 }
 user_conf = getattr(settings, 'TABULAR_PERMISSIONS_CONFIG', False)
 
