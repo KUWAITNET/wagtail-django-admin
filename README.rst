@@ -1,9 +1,5 @@
-django-fsm-wagtail
-==================
-
-Mixin to integrate django-fsm_ state transitions into the
-Wagtail Admin.
-
+wagtail-django-admin
+====================
 
 Installation
 ------------
@@ -18,14 +14,13 @@ from GitHub:
 Usage
 -----
 
-1. Add ``grappelli``, ``wagtail_django_admin`` then ``django.contrib.admin`` at the end of your ``INSTALLED_APPS``.
+1. Add ``wagtail_django_admin`` then ``django.contrib.admin`` at the end of your ``INSTALLED_APPS``.
 
 .. code:: python
 
    INSTALLED_APPS = [
       ...
       "wagtail_django_admin",
-      "grappelli",
       "django.contrib.admin",
    ]
 
@@ -36,4 +31,10 @@ Usage
    WAGTAIL_ADMIN_CUSTOM_MENU = {
       "<app_name>": [..., "<model_name>", ...]
    }
+
+3. In project ``urls.py`` add the following line:
+   
+.. code:: python
+
+   path("^wagtail_django_admin/", include("wagtail_django_admin.urls", "wagtail_django_admin")),
 
