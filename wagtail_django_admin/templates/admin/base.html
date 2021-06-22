@@ -1,70 +1,119 @@
 {% extends "wagtailadmin/base.html" %}
-{% load static %}{% load i18n grp_tags %}
+{% load i18n static jet_tags %}
 {% load wagtailadmin_tags wagtailcore_tags i18n %}
 
+{% jet_get_current_version as JET_VERSION %}
+
 {% block extra_css %}
-<link href="{% static "grappelli/jquery/ui/jquery-ui.min.css" %}" rel="stylesheet" type="text/css" media="screen" />
-<link href="{% static "grappelli/stylesheets/screen.css" %}" rel="stylesheet" type="text/css" media="all" />
-{% if LANGUAGE_BIDI %}
-    <link href="{% static "grappelli/stylesheets/mueller/grid/output-rtl.css" %}" rel="stylesheet" type="text/css" media="screen" />
-    <link href="{% block stylesheet_rtl %}{% static "grappelli/stylesheets/rtl.css" %}{% endblock %}" rel="stylesheet" type="text/css" media="screen" />
-{% else %}
-    <link href="{% static "grappelli/stylesheets/mueller/grid/output.css" %}" rel="stylesheet" type="text/css" media="screen" />
-{% endif %}
+<meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+<link rel="stylesheet" type="text/css" href="{% block stylesheet %}{% static "admin/css/base.css" %}{% endblock %}" />
+
+<link rel="stylesheet" type="text/css" href="{% static "jet/css/vendor.css" as url %}{{ url|jet_append_version }}" />
+<link rel="stylesheet" type="text/css" href="{% static "jet/css/icons/style.css" as url %}{{ url|jet_append_version }}" />
+<link rel="stylesheet" type="text/css" href="{% static "jet/css/themes/default/base.css" as url %}{{ url|jet_append_version }}" class="base-stylesheet" />
+<link rel="stylesheet" type="text/css" href="{% static "jet/css/themes/default/select2.theme.css" as url %}{{ url|jet_append_version }}" class="select2-stylesheet" />
+<link rel="stylesheet" type="text/css" href="{% static "jet/css/themes/default/jquery-ui.theme.css" as url %}{{ url|jet_append_version }}" class="jquery-ui-stylesheet" />
+<link rel="stylesheet" type="text/css" href="{% static 'admin/css/tab_perm_custom.css' %}" />
+
 {% block extrastyle %}{% endblock %}
+{% if LANGUAGE_BIDI %}<link rel="stylesheet" type="text/css" href="{% block stylesheet_rtl %}{% static "admin/css/rtl.css" %}{% endblock %}" />{% endif %}
 <style>
-.label, label {
-    width: 100%;
-}
-header, header a {
-    color: inherit;
-}
-header {
-    background-color: inherit;
-}
-header h1, header h2 {
-    color: inherit;
-}
-input[type=checkbox]:before {
-    content: inherit;
-}
-.halloeditor, .tagit, input:not([type=submit]), select, textarea {
-    width: 100%;
-    appearance: inherit;
+a, a:visited, a:hover, a:focus {
+    color: #4d4d4d ;
 }
 
-header#grp-header {
-    z-index: 50;
+#footer {
+    padding: 0;
+}
+html {
+    height: 100%;
 }
 
-table.grp-table.grp-sortable thead th.sortable {
-    position: relative;
-    z-index: 50;
+.wrapper, body.change-form, body.dashboard {
+    height: auto;
 }
-
-.nav-search {
-    font-family: Open Sans,Arial,sans-serif;
-    font-size: 85%;
-}
-
 #menu-search-q {
     padding: .8em 2.5em .8em 1em;
     height: auto;
     font-size: 1em;
     background: inherit;
     border-radius: 0px;
+    width: 100%;
 }
 
-select {
+table thead th {
+    background: rgb(0, 125, 126);
+}
+
+#toolbar form input[type="submit"], #toolbar form input[type="submit"]:visited, #toolbar form input[type="submit"]:hover {
+    background-color: rgb(0, 103, 106);
+}
+
+.button, .button:visited, .button:hover, input[type="submit"], input[type="submit"]:visited, input[type="submit"]:hover, input[type="button"], input[type="button"]:visited, input[type="button"]:hover, .object-tools a, .object-tools a:visited, .object-tools a:hover {
+    background-color: rgb(77, 77, 77);
+    color: white;
+
+}
+
+label, label {
+    display: initial;
+    width: auto;
+    padding: inherit;
+}
+
+.halloeditor, .tagit, input:not([type=submit]), select, textarea {
     width: auto;
 }
 
-.grp-fixed-footer {
-    left: 200px;
-    width: 85vw;
+.changeform-tabs {
+    background-color: rgb(0, 103, 106);
 }
+.changeform-tabs-item.selected a, .changeform-tabs-item.selected a:hover, .changeform-tabs-item.selected a:visited {
+    color: #ffff;
+}
+.ui-widget-header {
+    background: rgb(0, 103, 106);
+}
+
+.changeform-tabs-item.selected a, .changeform-tabs-item.selected a:hover, .changeform-tabs-item.selected a:visited {
+    color: rgb(51, 51, 51);
+    background-color: #ffff;
+    border-color: rgb(51, 51, 51);
+    border-top-style: solid;
+    border-top-width: 4.07812px;
+    border-bottom: none;
+}
+
+body {
+    font-size: 87.5% !important;
+}
+
+.modal-content, .modal-dialog:before {
+    display: inherit;
+}
+
+.modal .close {
+    width: auto;
+}
+.label, label {
+    width: auto;
+}
+
 </style>
-{% endblock %}
+{% endblock extra_css %}
+
+{% block js %}
+    {{ block.super }}
+<script type="text/javascript" src="{% url 'jet:jsi18n' %}"></script>
+<script src="{% static 'admin/js/jquery.min.js' %}"></script>
+<script src="{% static "admin/js/jquery.init.js" as url %}{{ url|jet_append_version }}"></script>
+<script src="{% static "jet/js/bundle.min.js" as url %}{{ url|jet_append_version }}"></script>
+
+{% block extrahead %}{% endblock %}
+{% block blockbots %}<meta name="robots" content="NONE,NOARCHIVE" />{% endblock %}
+{% block javascripts %} {% endblock %} 
+{% endblock js %}
 
 {% block furniture %}
     <aside class="nav-wrapper" data-nav-primary>
@@ -88,176 +137,90 @@ select {
         </div>
         <div class="explorer__wrapper" data-explorer-menu></div>
     </aside>
+<!-- Container -->
+<div id="container">
 
-    <main class="content-wrapper" role="main" id="main">
-        <div class="content">
-            <div id="nav-toggle" class="nav-toggle icon text-replace">{% trans "Menu" %}</div>
-            
-            <!-- from Grappelli -->
-            <div id="container" class="grp-container">
-
-                {% block header %}
-                <!-- HEADER -->
-                <header id="grp-header" class="{% block header-class %}{% endblock %}">
-                    {% if not is_popup %}
-                        {% block navigation %}
-                            <!-- NAVIGATION -->
-                            <div id="grp-navigation">
-                                {% block branding %}{% endblock %}
-                                {% block admin_title %}
-                                    <h1 id="grp-admin-title">
-                                        {% trans "Django administration" as vanilla_site_header %}
-                                        {% if site_header and site_header != vanilla_site_header %}
-                                            {{ site_header|safe }}
-                                        {% elif grappelli_admin_title %}
-                                            {{ grappelli_admin_title }}
-                                        {% else %}
-                                            {% get_admin_title %}
-                                        {% endif %}
-                                    </h1>
-                                {% endblock %}
-                                {% block user-tools %}
-                                    {% if user.is_authenticated and user.is_staff %}
-                                        <ul id="grp-user-tools">
-                                            <!-- Userlinks -->
-                                            {% block userlinks %}
-                                                <!-- Username -->
-                                                <li class="grp-user-options-container grp-collapse grp-closed {% if request.session.original_user %}grp-switch-user-is-target{% endif %}">
-                                                    <a href="javascript://" class="user-options-handler grp-collapse-handler {% if request.session.original_user %}grp-switch-user-is-target{% else %}grp-switch-user-is-original{% endif %}">{% firstof user.get_short_name user.get_username %}</a>
-                                                    <ul class="grp-user-options">
-                                                        <!-- Change Password -->
-                                                        {% if user.has_usable_password %}
-                                                            <li><a href="{% url 'admin:password_change' %}" class="grp-change-password">{% trans 'Change password' %}</a></li>
-                                                        {% endif %}
-                                                        <!-- Logout -->
-                                                        <li><a href="{% url 'admin:logout' %}" class="grp-logout">{% trans 'Log out' %}</a></li>
-                                                        <!-- Switch -->
-                                                        {% switch_user_dropdown %}
-                                                    </ul>
-                                                </li>
-                                                <!-- Site URL -->
-                                                {% if site_url %}
-                                                    <li><a href="{{ site_url }}">{% trans 'View site' %}</a></li>
-                                                {% endif %}
-                                                <!-- Documentation -->
-                                                {% url 'django-admindocs-docroot' as docsroot %}
-                                                {% if docsroot %}
-                                                    <li><a href="{{ docsroot }}">{% trans 'Documentation' %}</a></li>
-                                                {% endif %}
-                                            {% endblock %}
-                                        </ul>
-                                    {% endif %}
-                                {% endblock %}
-                                <!-- Nav-Global -->
-                                {% block nav-global %}{% endblock %}
-                            </div>
-                        {% endblock %}
-
-                        {% block context-navigation %}
-                            <!-- CONTEXT NAVIGATION -->
-                            <div id="grp-context-navigation">
-                                <nav id="grp-breadcrumbs" class="{% block breadcrumbs-class %}{% endblock %}">
-                                    <header style="display:none"><h1>Breadcrumbs</h1></header>
-                                    {% block breadcrumbs %}
-                                        <ul>
-                                            <li><a href="{% url 'admin:index' %}">{% trans 'Home' %}</a></li>
-                                            {% if title %}
-                                                <li> &rsaquo; {{ title }}</li>
-                                            {% endif %}
-                                        </ul>
-                                    {% endblock %}
-                                </nav>
-                                <nav id="grp-page-tools">
-                                    <header style="display:none"><h1>Page Tools</h1></header>
-                                    {% block page-tools %}{% endblock %}
-                                </nav>
-                            </div>
-                        {% endblock %}
-
-                    {% endif %}
-                </header>
-                {% endblock %}
-                <article id="grp-content" class="{% block content-class %}{% endblock %}">
-
-                    <!-- MESSAGES -->
-                    {% block messages %}
-                        {% if messages %}
-                            <ul class="grp-messagelist">
-                                <!-- NOTE: no message|capfirst by purpose, because it does not work in some languages -->
-                                {% for message in messages %}
-                                    <li{% if message.tags %} class="grp-{{ message.tags }}"{% endif %}>{{ message }}</li>
-                                {% endfor %}
-                            </ul>
-                        {% endif %}
-                    {% endblock %}
-
-                    <!-- CONTENT TITLE -->
-                    <header id="grp-content-title">
-                        {% block pretitle %}{% endblock %}
-                        {% block content_title %}{% if title %}<h1>{{ title }}</h1>{% endif %}{% endblock %}
-                        {% block object-tools %}{% endblock %}
-                    </header>
-
-                    <!-- CONTENT-CONTAINER -->
-                    <div id="grp-content-container">
-                        {% block content %}
-                            {{ content }}
-                            {% block filters %}{% endblock %}
-                        {% endblock %}
-                    </div>
-                </article>
-
-            <!-- FOOTER -->
-            {% block footer %}{% endblock %}
-
-            </div>
+    {% if not is_popup %}
+    <!-- Header -->
+    <div id="header">
+        <div id="branding">
+            <span id="branding-menu" class="sidebar-header-menu-icon icon-menu sidebar-toggle"></span>
+            <span id="branding-pin" class="sidebar-link-icon icon-pin sidebar-pin"></span>
+            {% block branding %}{% endblock %}
         </div>
-    </main>
-{% endblock %}
-
-{% block js %}
-    {{ block.super }}
-
-    <script type="text/javascript">window.__admin_media_prefix__ = "{% filter escapejs %}{% static "grappelli/" %}{% endfilter %}";</script>
-    <script type="text/javascript">window.__admin_utc_offset__ = "{% filter escapejs %}{% now "Z" %}{% endfilter %}";</script>
-    <script type="text/javascript" charset="utf-8">
-        // GLOBALS
-        var grappelli = {},
-            ADMIN_URL = "{% url 'admin:index' %}",
-            MODEL_URL_ARRAY = {% if user.is_staff %}{% get_content_types %}{% else %}[]{% endif %},
-            DATE_FORMAT = "{% get_date_format %}",
-            TIME_FORMAT = "{% get_time_format %}",
-            DATETIME_FORMAT = "{% get_datetime_format %}";
-    </script>
-    <!-- jQuery, jQuery-UI -->
-    <script src="{% static "grappelli/jquery/jquery.min.js" %}" type="text/javascript"></script>
-    <script src="{% static "grappelli/jquery/jquery-migrate-3.0.1.min.js" %}" type="text/javascript"></script>
-    <script src="{% static "grappelli/jquery/ui/jquery-ui.min.js" %}" type="text/javascript"></script>
-    {% if debug %}
-        <!-- Grappelli Main JS -->
-        <script src="{% static "grappelli/js/grappelli.js" %}" type="text/javascript"></script>
-        <!-- Grappelli jQuery Plugins, Widgets -->
-        <script src="{% static "grappelli/js/jquery.grp_collapsible.js" %}" type="text/javascript"></script>
-        <script src="{% static "grappelli/js/jquery.grp_collapsible_group.js" %}" type="text/javascript"></script>
-        <script src="{% static "grappelli/js/jquery.grp_timepicker.js" %}" type="text/javascript"></script>
-        <script src="{% static "grappelli/js/jquery.grp_related_fk.js" %}" type="text/javascript"></script>
-        <script src="{% static "grappelli/js/jquery.grp_related_m2m.js" %}" type="text/javascript"></script>
-        <script src="{% static "grappelli/js/jquery.grp_related_generic.js" %}" type="text/javascript"></script>
-        <script src="{% static "grappelli/js/jquery.grp_autocomplete_fk.js" %}" type="text/javascript"></script>
-        <script src="{% static "grappelli/js/jquery.grp_autocomplete_m2m.js" %}" type="text/javascript"></script>
-        <script src="{% static "grappelli/js/jquery.grp_autocomplete_generic.js" %}" type="text/javascript"></script>
-        <script src="{% static "grappelli/js/jquery.grp_inline.js" %}" type="text/javascript"></script>
-    {% else %}
-        <!-- Grappelli Minified -->
-        <script src="{% static "grappelli/js/grappelli.min.js" %}" type="text/javascript"></script>
+        {% block usertools %}
+        
+        {% endblock %}
+    </div>
+    <!-- END Header -->
+    {% block breadcrumbs %}
+    <div class="breadcrumbs">
+    <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+    {% if title %} &rsaquo; {{ title }}{% endif %}
+    </div>
+    {% endblock %}
+    
     {% endif %}
-    <script type="text/javascript" charset="utf-8">
-        (function($) {
-            $(document).ready(function() {
-                $("#grp-navigation .grp-collapse").grp_collapsible();
-            });
-        })(grp.jQuery);
-    </script>
-    {% comment %} dont forget to add javascripts block since all grappelli template extend it {% endcomment %}
-    {% block javascripts %} {% endblock %} 
- {% endblock %}
+
+    {% block messages %}
+        {% if messages %}
+        <ul class="messagelist">{% for message in messages %}
+          <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message|capfirst }}</li>
+        {% endfor %}</ul>
+        {% endif %}
+    {% endblock messages %}
+
+    <!-- Content -->
+    <div id="content" class="{% block coltype %}colM{% endblock %}">
+        {% block pretitle %}{% endblock %}
+        {% block content_title %}{% if title %}<h1>{{ title }}</h1>{% endif %}{% endblock %}
+        {% block content %}
+        {% block object-tools %}{% endblock %}
+        {{ content }}
+        {% endblock %}
+        {% block sidebar %}{% endblock %}
+        <br class="clear" />
+    </div>
+    <!-- END Content -->
+
+    {% block footer %}<div id="footer"></div>{% endblock %}
+
+    {% jet_delete_confirmation_context as delete_confirmation_context %}
+    {{ delete_confirmation_context }}
+
+    {% jet_change_form_sibling_links_enabled as show_siblings %}
+    {% if change and show_siblings %}
+        <div class="changeform-navigation">
+            {% spaceless %}
+                {% jet_previous_object as sibling %}
+                <a{% if sibling.url %} href="{{ sibling.url }}"{% endif %} class="changeform-navigation-button segmented-button left{% if not sibling %} disabled{% endif %}" title="{{ sibling.label }}">
+                    <span class="changeform-navigation-button-icon left icon-arrow-left"></span>
+                    <span class="changeform-navigation-button-label">
+                        {% if sibling %}
+                            {{ sibling.label }}
+                        {% else %}
+                            ---
+                        {% endif %}
+                    </span>
+                </a>
+
+                {% jet_next_object as sibling %}
+                <a{% if sibling.url %} href="{{ sibling.url }}"{% endif %} class="changeform-navigation-button segmented-button right{% if not sibling %} disabled{% endif %}" title="{{ sibling.label }}">
+                    <span class="changeform-navigation-button-icon right icon-arrow-right"></span>
+                    <span class="changeform-navigation-button-label">
+                        {% if sibling %}
+                            {{ sibling.label }}
+                        {% else %}
+                            ---
+                        {% endif %}
+                    </span>
+                </a>
+            {% endspaceless %}
+        </div>
+    {% endif %}
+
+</div>
+<!-- END Container -->
+{% endblock furniture %}
+{% block custom_page_js %}
+{% endblock %}

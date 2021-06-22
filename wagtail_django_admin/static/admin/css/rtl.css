@@ -1,0 +1,64 @@
+thead th, tfoot td {
+    text-align: right;
+}
+
+.dashboard-item-header-buttons{
+    float: left;
+}
+
+.sidebar{
+    right: 0;
+    transform: translate3d(100%, 0, 0);
+    z-index: 100000001;
+}
+
+
+.dashboard-item-content ul:not(.inline) li .float-right {
+    float: left;
+    }
+
+ body.menu-pinned #container {
+    padding-right: 250px;
+    padding-right: 17.85714rem;
+    padding-left: 0px;
+}
+
+th {
+    text-align: right;
+}
+
+.sidebar-container-toggle {
+    float: right;
+    padding: 0 10px;
+ }
+
+.user-tools ul{
+   right: 2.8rem;
+}
+
+#container {
+     transition: padding-right 0.3s;
+}
+
+#djDebug #djDebugToolbarHandle{
+    top: 49px !important;
+}
+
+.user-tools ul{
+    right: initial;
+    left: 10px
+}
+
+.dashboard-tools {
+    left: 16.35714rem;
+    right: initial;
+}
+
+.sidebar-right{
+    float: left;
+     -webkit-transform: rotate(180deg);
+    -moz-transform: rotate(180deg);
+    -o-transform: rotate(180deg);
+    -ms-transform: rotate(180deg);
+    transform: rotate(180deg);
+}
