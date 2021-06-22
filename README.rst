@@ -8,7 +8,7 @@ from GitHub:
 
 .. code:: sh
 
-   $ pip install -e git://github.com/abahnihi/wagtail-django-admin.git#egg=wagtail-django-admin
+   $ pip install -e git+https://github.com/abahnihi/wagtail-django-admin.git#egg=wagtail_django_admin
 
 
 Usage
