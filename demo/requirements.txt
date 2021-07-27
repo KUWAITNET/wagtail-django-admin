@@ -1,0 +1,4 @@
+# Django
+Django==3.1.8
+wagtail==2.13.3
+-e git+https://github.com/KuwaitNET/wagtail-django-admin.git#egg=wagtail_django_admin
