@@ -107,6 +107,7 @@ app_list = get_app_list(context={"request": None})
 
 for app in app_list:
     app_name = str(app["app_label"])
+    app_menu_name = str(app["name"])
     WAGTAIL_ADMIN_CUSTOM_MENU = getattr(django_settings, "WAGTAIL_ADMIN_CUSTOM_MENU", {})
     all_apps = WAGTAIL_ADMIN_CUSTOM_MENU.keys()
     if (
@@ -121,11 +122,11 @@ for app in app_list:
 
         @hooks.register("register_admin_menu_item")
         def register_wagtail_django_admin_menu(
-            app_name=app_name, wagtail_django_admin_menu=wagtail_django_admin_menu
+            app_name=app_menu_name, wagtail_django_admin_menu=wagtail_django_admin_menu
         ):
 
             return CustomSubmenuMenuItem(
-                app_name,
+                _(app_name),
                 wagtail_django_admin_menu,
                 icon_name="folder-inverse",
                 order=10000,
@@ -133,6 +134,7 @@ for app in app_list:
 
         for model in app["models"]:
             model_name = str(model["model_name"])
+            model_menu_name = str(model["name"])
             admin_url = model["admin_url"]
             if (
                 hasattr(django_settings, "WAGTAIL_ADMIN_CUSTOM_MENU")
@@ -150,9 +152,9 @@ for app in app_list:
 
                 @hooks.register("register_wagtail_django_admin_menu_item" + app_name)
                 def register_users_menu_item(
-                    model_name=model_name, admin_url=admin_url
+                    model_name=model_menu_name, admin_url=admin_url
                 ):
                     item = CustomMenuItem(
-                        model_name, admin_url, icon_name="folder-inverse", order=10000
+                        _(model_name), admin_url, icon_name="folder-inverse", order=10000
                     )
                     return item

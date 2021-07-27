@@ -33,3 +33,4 @@ CACHE/*
 togit.sh
 htmlcov/
 setup.sql
+demo/db.sqlite3

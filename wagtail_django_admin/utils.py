@@ -10,23 +10,40 @@ from django.apps.registry import apps
 from django.utils.encoding import smart_text
 from django.utils import translation
 from django.contrib.admin.options import IncorrectLookupParameters
+from django.conf import settings
 
+
+LANGUAGES = [lang[0] for lang in settings.LANGUAGES]
 
 def reverse_no_i18n(viewname, *args, **kwargs):
     result = reverse(viewname, *args, **kwargs)
-    m = re.match(r"(/[^/]*)(/.*$)", result)
-    return m.groups()[1]
+    if settings.USE_I18N:
+        m = re.match(r"(/[^/]*)(/.*$)", result)
+        url_lang = m.groups()[0][1:]
+        if url_lang in LANGUAGES:
+            return m.groups()[1]
+        else:
+            return result
+    else:
+        return result
 
 
 def url_no_i18n(url, *args, **kwargs):
-    m = re.match(r"(/[^/]*)(/.*$)", url)
-    return m.groups()[1]
+    if settings.USE_I18N:
+        m = re.match(r"(/[^/]*)(/.*$)", url)
+        url_lang = m.groups()[0][1:]
+        if url_lang in LANGUAGES:
+            return m.groups()[1]
+        else:
+            return url
+    else:
+        return url
 
 
 def get_app_list(context, order=True):
     admin_site = get_admin_site(context)
     request = context["request"]
-
+    translation.activate("en")
     app_dict = {}
     for model, model_admin in admin_site._registry.items():
         app_label = model._meta.app_label
