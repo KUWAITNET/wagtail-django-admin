@@ -1,0 +1,7 @@
+.aligned label {
+    float: right;
+}
+
+.nav-submenu .menu-item a .icon--menuitem {
+    margin-left: 0;
+}

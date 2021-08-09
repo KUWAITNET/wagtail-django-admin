@@ -1,0 +1,108 @@
+.nav-main a {
+    color: #ccc;
+}
+#footer {
+    padding: 0;
+}
+html {
+    height: 100%;
+    font-size: 100%;
+}
+
+.wrapper, body.change-form, body.dashboard {
+    height: auto;
+}
+
+@media screen and (min-width: 50em)
+.nav-main .account {
+    background: #1a1a1a;
+    color: #ccc;
+    text-transform: uppercase;
+    display: block;
+    cursor: pointer;
+}
+
+.nav-main .account [class^="icon-"], .nav-main .account [class*=" icon-"] {
+    font-family: 'jet-icons' !important;
+    speak: none;
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+    text-transform: uppercase;
+    line-height: 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+#menu-search-q {
+    padding: .8em 2.5em .8em 1em;
+    height: auto;
+    font-size: 1em;
+    background: inherit;
+    border-radius: 0px;
+    width: 100%;
+}
+
+table thead th {
+    background: rgb(0, 125, 126);
+}
+
+#toolbar form input[type="submit"], #toolbar form input[type="submit"]:visited, #toolbar form input[type="submit"]:hover {
+    background-color: rgb(0, 103, 106);
+}
+
+.button, .button:visited, .button:hover, input[type="submit"], input[type="submit"]:visited, input[type="submit"]:hover, input[type="button"], input[type="button"]:visited, input[type="button"]:hover, .object-tools a, .object-tools a:visited, .object-tools a:hover {
+    background-color: rgb(77, 77, 77);
+    color: white;
+
+}
+
+label, label {
+    display: initial;
+    width: auto;
+    padding: inherit;
+}
+
+.halloeditor, .tagit, input:not([type=submit]), select, textarea {
+    width: auto;
+}
+
+.changeform-tabs {
+    background-color: rgb(0, 103, 106);
+}
+.changeform-tabs-item.selected a, .changeform-tabs-item.selected a:hover, .changeform-tabs-item.selected a:visited {
+    color: #ffff;
+}
+.ui-widget-header {
+    background: rgb(0, 103, 106);
+}
+
+.changeform-tabs-item.selected a, .changeform-tabs-item.selected a:hover, .changeform-tabs-item.selected a:visited {
+    color: rgb(51, 51, 51);
+    background-color: #ffff;
+    border-color: rgb(51, 51, 51);
+    border-top-style: solid;
+    border-top-width: 4.07812px;
+    border-bottom: none;
+}
+
+body {
+    font-family: Open Sans,Arial,sans-serif;
+    font-size: 87.5% !important;
+    height: auto;
+}
+
+.modal-content, .modal-dialog:before {
+    display: inherit;
+}
+
+.modal .close {
+    width: auto;
+}
+.label, label {
+    width: auto;
+}
+.changelist-footer.fixed, table.helper {
+    left: 220px;
+}
+

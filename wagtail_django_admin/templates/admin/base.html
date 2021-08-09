@@ -17,90 +17,10 @@
 <link rel="stylesheet" type="text/css" href="{% static 'admin/css/tab_perm_custom.css' %}" />
 
 {% block extrastyle %}{% endblock %}
+<link rel="stylesheet" type="text/css" href="{% static "wagtail_django_admin/css/wagtail_django_admin.css" %}"
 {% if LANGUAGE_BIDI %}<link rel="stylesheet" type="text/css" href="{% block stylesheet_rtl %}{% static "admin/css/rtl.css" %}{% endblock %}" />{% endif %}
-<style>
-a, a:visited, a:hover, a:focus {
-    color: #4d4d4d ;
-}
+{% if LANGUAGE_BIDI %}<link rel="stylesheet" type="text/css" href="{% static "wagtail_django_admin/css/rtl.css" %}"{% endif %}
 
-#footer {
-    padding: 0;
-}
-html {
-    height: 100%;
-}
-
-.wrapper, body.change-form, body.dashboard {
-    height: auto;
-}
-#menu-search-q {
-    padding: .8em 2.5em .8em 1em;
-    height: auto;
-    font-size: 1em;
-    background: inherit;
-    border-radius: 0px;
-    width: 100%;
-}
-
-table thead th {
-    background: rgb(0, 125, 126);
-}
-
-#toolbar form input[type="submit"], #toolbar form input[type="submit"]:visited, #toolbar form input[type="submit"]:hover {
-    background-color: rgb(0, 103, 106);
-}
-
-.button, .button:visited, .button:hover, input[type="submit"], input[type="submit"]:visited, input[type="submit"]:hover, input[type="button"], input[type="button"]:visited, input[type="button"]:hover, .object-tools a, .object-tools a:visited, .object-tools a:hover {
-    background-color: rgb(77, 77, 77);
-    color: white;
-
-}
-
-label, label {
-    display: initial;
-    width: auto;
-    padding: inherit;
-}
-
-.halloeditor, .tagit, input:not([type=submit]), select, textarea {
-    width: auto;
-}
-
-.changeform-tabs {
-    background-color: rgb(0, 103, 106);
-}
-.changeform-tabs-item.selected a, .changeform-tabs-item.selected a:hover, .changeform-tabs-item.selected a:visited {
-    color: #ffff;
-}
-.ui-widget-header {
-    background: rgb(0, 103, 106);
-}
-
-.changeform-tabs-item.selected a, .changeform-tabs-item.selected a:hover, .changeform-tabs-item.selected a:visited {
-    color: rgb(51, 51, 51);
-    background-color: #ffff;
-    border-color: rgb(51, 51, 51);
-    border-top-style: solid;
-    border-top-width: 4.07812px;
-    border-bottom: none;
-}
-
-body {
-    font-size: 87.5% !important;
-}
-
-.modal-content, .modal-dialog:before {
-    display: inherit;
-}
-
-.modal .close {
-    width: auto;
-}
-.label, label {
-    width: auto;
-}
-
-</style>
 {% endblock extra_css %}
 
 {% block js %}

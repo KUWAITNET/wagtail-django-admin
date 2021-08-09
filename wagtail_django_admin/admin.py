@@ -16,36 +16,47 @@ from .widgets import TabularPermissionsWidget
 from . import settings
 
 
-
 User = get_user_model()
 
 
 class UserTabularPermissionsMixin:
     def formfield_for_manytomany(self, db_field, request=None, **kwargs):
-        field = super(UserTabularPermissionsMixin, self).formfield_for_manytomany(db_field, request, **kwargs)
-        if db_field.name == 'user_permissions':
-            field.widget = TabularPermissionsWidget(db_field.verbose_name, db_field.name in self.filter_vertical)
-            field.help_text = ''
+        field = super(UserTabularPermissionsMixin, self).formfield_for_manytomany(
+            db_field, request, **kwargs
+        )
+        if db_field.name == "user_permissions":
+            field.widget = TabularPermissionsWidget(
+                db_field.verbose_name, db_field.name in self.filter_vertical
+            )
+            field.help_text = ""
         return field
 
 
 class GroupTabularPermissionsMixin:
     def formfield_for_manytomany(self, db_field, request=None, **kwargs):
-        field = super(GroupTabularPermissionsMixin, self).formfield_for_manytomany(db_field, request, **kwargs)
-        if db_field.name == 'permissions':
-            field.widget = TabularPermissionsWidget(db_field.verbose_name, db_field.name in self.filter_vertical,
-                                                    'permissions')
-            field.help_text = ''
+        field = super(GroupTabularPermissionsMixin, self).formfield_for_manytomany(
+            db_field, request, **kwargs
+        )
+        if db_field.name == "permissions":
+            field.widget = TabularPermissionsWidget(
+                db_field.verbose_name,
+                db_field.name in self.filter_vertical,
+                "permissions",
+            )
+            field.help_text = ""
         return field
-
 
 
 class TabularPermissionsUserAdmin(admin.site._registry[User].__class__):
     def formfield_for_manytomany(self, db_field, request=None, **kwargs):
-        field = super(TabularPermissionsUserAdmin, self).formfield_for_manytomany(db_field, request, **kwargs)
-        if db_field.name == 'user_permissions':
-            field.widget = TabularPermissionsWidget(db_field.verbose_name, db_field.name in self.filter_vertical)
-            field.help_text = ''
+        field = super(TabularPermissionsUserAdmin, self).formfield_for_manytomany(
+            db_field, request, **kwargs
+        )
+        if db_field.name == "user_permissions":
+            field.widget = TabularPermissionsWidget(
+                db_field.verbose_name, db_field.name in self.filter_vertical
+            )
+            field.help_text = ""
         return field
 
 
@@ -61,6 +72,7 @@ admin.site.register(User, TabularPermissionsUserAdmin)
 UserAdmin = admin.site._registry[User].__class__
 admin.site.unregister(Group)
 admin.site.register(Group, TabularPermissionsGroupAdmin)
+
 
 class CustomSubmenuMenuItem(SubmenuMenuItem):
     template = "wagtail_django_admin/menu_submenu_item.html"
@@ -108,7 +120,9 @@ app_list = get_app_list(context={"request": None})
 for app in app_list:
     app_name = str(app["app_label"])
     app_menu_name = str(app["name"])
-    WAGTAIL_ADMIN_CUSTOM_MENU = getattr(django_settings, "WAGTAIL_ADMIN_CUSTOM_MENU", {})
+    WAGTAIL_ADMIN_CUSTOM_MENU = getattr(
+        django_settings, "WAGTAIL_ADMIN_CUSTOM_MENU", {}
+    )
     all_apps = WAGTAIL_ADMIN_CUSTOM_MENU.keys()
     if (
         hasattr(django_settings, "WAGTAIL_ADMIN_CUSTOM_MENU")
@@ -134,20 +148,32 @@ for app in app_list:
 
         for model in app["models"]:
             model_name = str(model["model_name"])
+            object_name = str(model["object_name"])
             model_menu_name = str(model["name"])
             admin_url = model["admin_url"]
             if (
-                hasattr(django_settings, "WAGTAIL_ADMIN_CUSTOM_MENU")
-                and type(django_settings.WAGTAIL_ADMIN_CUSTOM_MENU) is dict
-                and app_name in django_settings.WAGTAIL_ADMIN_CUSTOM_MENU.keys()
-                and type(django_settings.WAGTAIL_ADMIN_CUSTOM_MENU[app_name]) is list
-                and model_name in django_settings.WAGTAIL_ADMIN_CUSTOM_MENU[app_name]
-            ) or not hasattr(django_settings, "WAGTAIL_ADMIN_CUSTOM_MENU") or (
-                hasattr(django_settings, "WAGTAIL_ADMIN_CUSTOM_MENU")
-                and type(django_settings.WAGTAIL_ADMIN_CUSTOM_MENU) is dict
-                and app_name in django_settings.WAGTAIL_ADMIN_CUSTOM_MENU.keys()
-                and type(django_settings.WAGTAIL_ADMIN_CUSTOM_MENU[app_name]) is list
-                and not django_settings.WAGTAIL_ADMIN_CUSTOM_MENU[app_name]
+                (
+                    hasattr(django_settings, "WAGTAIL_ADMIN_CUSTOM_MENU")
+                    and type(django_settings.WAGTAIL_ADMIN_CUSTOM_MENU) is dict
+                    and app_name in django_settings.WAGTAIL_ADMIN_CUSTOM_MENU.keys()
+                    and type(django_settings.WAGTAIL_ADMIN_CUSTOM_MENU[app_name])
+                    is list
+                    and (
+                        model_name
+                        in django_settings.WAGTAIL_ADMIN_CUSTOM_MENU[app_name]
+                        or object_name
+                        in django_settings.WAGTAIL_ADMIN_CUSTOM_MENU[app_name]
+                    )
+                )
+                or not hasattr(django_settings, "WAGTAIL_ADMIN_CUSTOM_MENU")
+                or (
+                    hasattr(django_settings, "WAGTAIL_ADMIN_CUSTOM_MENU")
+                    and type(django_settings.WAGTAIL_ADMIN_CUSTOM_MENU) is dict
+                    and app_name in django_settings.WAGTAIL_ADMIN_CUSTOM_MENU.keys()
+                    and type(django_settings.WAGTAIL_ADMIN_CUSTOM_MENU[app_name])
+                    is list
+                    and not django_settings.WAGTAIL_ADMIN_CUSTOM_MENU[app_name]
+                )
             ):
 
                 @hooks.register("register_wagtail_django_admin_menu_item" + app_name)
@@ -155,6 +181,9 @@ for app in app_list:
                     model_name=model_menu_name, admin_url=admin_url
                 ):
                     item = CustomMenuItem(
-                        _(model_name), admin_url, icon_name="folder-inverse", order=10000
+                        _(model_name),
+                        admin_url,
+                        icon_name="folder-inverse",
+                        order=10000,
                     )
                     return item
