@@ -141,6 +141,11 @@
 
 </div>
 <!-- END Container -->
+<script src="{% static 'wagtail_django_admin/js/cookie-js.js' %}"></script>
+<script>
+var cookieName = "django_language";
+Cookie.set(cookieName, "{{ LANGUAGE_CODE }}", { expires: 10 });
+</script>
 {% endblock furniture %}
 {% block custom_page_js %}
 {% endblock %}
