@@ -106,14 +106,26 @@ body {
     left: 220px;
 }
 
-fieldset .form-row {
-    display: table-row;
-}
-
 input[type="checkbox"] + label::before {
     display: none;
 }
 
 input[type=checkbox]#action-toggle {
     display: inline !important;
+}
+
+input[type=checkbox] {
+    display: inline-block !important;
+  }
+
+input[type=checkbox]:before {
+    position: inherit;
+}
+
+.action-checkbox label {
+    display: none;
+}
+
+.form-row {
+    display: grid !important;
 }

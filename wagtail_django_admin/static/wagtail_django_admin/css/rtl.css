@@ -1,7 +1,16 @@
 .aligned label {
     float: right;
+    text-align: initial;
 }
 
 .nav-submenu .menu-item a .icon--menuitem {
     margin-left: 0;
+}
+
+.related-widget-wrapper, input, textarea, .select2-results__options {
+    float: right;
+}
+
+.related-widget-wrapper-user-permissions {
+    float: none;
 }
