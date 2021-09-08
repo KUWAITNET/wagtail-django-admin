@@ -14,3 +14,11 @@
 .related-widget-wrapper-user-permissions {
     float: none;
 }
+
+input {
+    margin: 0 20px !important;
+}
+
+label {
+    float: right !important;
+}

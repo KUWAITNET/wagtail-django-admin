@@ -57,7 +57,7 @@ table thead th {
 
 }
 
-label, label {
+label {
     display: initial;
     width: auto;
     padding: inherit;
@@ -128,4 +128,8 @@ input[type=checkbox]:before {
 
 .form-row {
     display: grid !important;
+}
+
+ul {
+    margin: 0 !important;
 }
