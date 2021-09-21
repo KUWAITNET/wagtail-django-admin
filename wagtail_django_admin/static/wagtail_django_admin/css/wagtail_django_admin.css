@@ -126,10 +126,14 @@ input[type=checkbox]:before {
     display: none;
 }
 
-.form-row {
-    display: grid !important;
-}
-
 ul {
     margin: 0 !important;
+}
+
+th.original {
+    display: none;
+}
+
+fieldset thead, fieldset tr {
+    display: flex
 }
