@@ -126,7 +126,7 @@ input[type=checkbox]:before {
     display: none;
 }
 
-ul {
+form .aligned ul {
     margin: 0 !important;
 }
 

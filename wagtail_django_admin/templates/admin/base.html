@@ -36,6 +36,7 @@
 {% endblock js %}
 
 {% block furniture %}
+    {% if not is_popup %}
     <aside class="nav-wrapper" data-nav-primary>
         <div class="inner">
             <a href="{% url 'wagtailadmin_home' %}" class="logo" aria-label="{% trans 'Dashboard' %}">
@@ -50,35 +51,46 @@
                 {% endblock %}
                 <span class="u-hidden@sm">{% trans "Dashboard" %}</span>
             </a>
-
             {% menu_search %}
             {% main_nav %}
-
         </div>
         <div class="explorer__wrapper" data-explorer-menu></div>
     </aside>
+    {% else %}
+    <style>
+        .wrapper {
+            padding-left: 0px ! important;
+        }
+    </style>
+    {% endif %}
 <!-- Container -->
 <div id="container">
-
+    
     {% if not is_popup %}
-    <!-- Header -->
-    <div id="header">
-        <div id="branding">
-            <span id="branding-menu" class="sidebar-header-menu-icon icon-menu sidebar-toggle"></span>
-            <span id="branding-pin" class="sidebar-link-icon icon-pin sidebar-pin"></span>
-            {% block branding %}{% endblock %}
+        <div id="header">
+            <div id="branding">
+                <span id="branding-menu" class="sidebar-header-menu-icon icon-menu sidebar-toggle"></span>
+                <span id="branding-pin" class="sidebar-link-icon icon-pin sidebar-pin"></span>
+                {% block branding %}{% endblock %}
+            </div>
+            {% block usertools %}
+            
+            {% endblock %}
         </div>
-        {% block usertools %}
-        
+        <!-- END Header -->
+        {% block breadcrumbs %}
+        <div class="breadcrumbs">
+            <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+            {% if title %} &rsaquo; {{ title }}{% endif %}
+        </div>
         {% endblock %}
-    </div>
-    <!-- END Header -->
-    {% block breadcrumbs %}
-    <div class="breadcrumbs">
-    <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
-    {% if title %} &rsaquo; {{ title }}{% endif %}
-    </div>
-    {% endblock %}
+        <div class="related-popup-container scrollable">
+            <a href="#" class="related-popup-back">
+                <span class="related-popup-back-icon icon-arrow-left"></span>
+                <span class="related-popup-back-label">{% trans "back" %}</span>
+            </a>
+            <span class="icon-refresh loading-indicator"></span>
+        </div>
     
     {% endif %}
 
