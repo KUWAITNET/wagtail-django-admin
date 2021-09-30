@@ -130,10 +130,18 @@ form .aligned ul {
     margin: 0 !important;
 }
 
-th.original {
-    display: none;
+div.form-row div {
+    display: flex;
 }
 
-fieldset thead, fieldset tr {
-    display: flex
+div.form-row.field-user_permissions div {
+    display: block !important;
+}
+
+div.form-row.field-permissions div {
+    display: block !important;
+}
+
+tr.form-row {
+    display: table-row !important;
 }
