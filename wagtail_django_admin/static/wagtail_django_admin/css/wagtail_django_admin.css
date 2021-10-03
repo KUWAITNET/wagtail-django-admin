@@ -130,9 +130,9 @@ form .aligned ul {
     margin: 0 !important;
 }
 
-div.form-row div {
+/* div.form-row div {
     display: flex;
-}
+} */
 
 div.form-row.field-user_permissions div {
     display: block !important;

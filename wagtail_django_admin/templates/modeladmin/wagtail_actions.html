@@ -39,8 +39,10 @@
 }
 
 </style>
-<div class="actions">
-    {% for field in action_form %}{% if field.label %}<label>{{ field.label }} {% endif %}{{ field }}{% if field.label %}</label>{% endif %}{% endfor %}
+<div class="actions row">
+    {% for field in action_form %}
+      {% if field.label %}<label class="col1">{{ field.label }}</label>{% endif %}
+      <div class="col3">{{ field }}</div>{% endfor %}
     <!--<button type="submit" class="button" title="{% trans "Run the selected action" %}" name="index" value="{{ action_index|default:0 }}">{% trans "Go" %}</div>-->
     <div id="confirmAction" class="button" style="display: inline-grid;" title="{% trans "Run the selected action" %}" name="index" value="{{ action_index|default:0 }}">{% trans "Go" %}</div>
 

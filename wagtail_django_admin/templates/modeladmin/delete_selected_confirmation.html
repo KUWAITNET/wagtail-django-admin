@@ -1,0 +1,57 @@
+{% extends "wagtailadmin/base.html" %}
+{% load i18n l10n admin_urls static modeladmin_tags %}
+
+{% block titletag %}{{ view.get_meta_title }}{% endblock %}
+{% block extrahead %}
+    {{ block.super }}
+    {{ media }}
+    <script src="{% static 'admin/js/cancel.js' %}" async></script>
+{% endblock %}
+
+{% block bodyclass %}
+    {{ block.super }} app-{{ opts.app_label }} model-{{ opts.model_name }} delete-confirmation delete-selected-confirmation
+{% endblock %}
+
+
+{% block content %}
+    {% block header %}
+        {% include "wagtailadmin/shared/header.html" with title=view.get_page_title subtitle=view.get_page_subtitle icon=view.header_icon %}
+    {% endblock %}
+    {% block content_main %}
+        {% if perms_lacking %}
+            <p>Deleting the selected {{ objects_name }} would result in deleting related objects, but your account doesn't have permission to delete the following types of objects:</p>
+            <ul>
+            {% for obj in perms_lacking %}
+                <li>{{ obj }}</li>
+            {% endfor %}
+            </ul>
+        {% elif protected %}
+            <p>Deleting the selected {{ objects_name }} would require deleting the following protected related objects:</p>
+            <ul>
+            {% for obj in protected %}
+                <li>{{ obj }}</li>
+            {% endfor %}
+            </ul>
+        {% else %}
+            <div class="nice-padding">
+                <p>Are you sure you want to delete the selected {{ objects_name }}? All of the following objects and their related items will be deleted:</p>
+                {% include "admin/includes/object_delete_summary.html" %}
+                <h2>"Objects"</h2>
+                {% for deletable_object in deletable_objects %}
+                    <ul>{{ deletable_object|unordered_list }}</ul>
+                {% endfor %}
+                <form method="post">{% csrf_token %}
+                    <div>
+                        {% for obj in queryset %}
+                        <input type="hidden" name="{{ action_checkbox_name }}" value="{{ obj.pk|unlocalize }}">
+                        {% endfor %}
+                        <input type="hidden" name="action" value="delete_selected">
+                        <input type="hidden" name="post" value="yes">
+                        <input type="submit" class="button no" value="'Yes, I’m sure'">
+                        <a href="{{ view.index_url }}" class="button cancel-link"> "No, take me back"</a>
+                    </div>
+                </form>
+            </div>
+        {% endif %}
+    {% endblock %}
+{% endblock %}

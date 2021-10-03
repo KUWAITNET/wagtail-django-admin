@@ -1,9 +1,14 @@
+from datetime import datetime
+import calendar
+
 from django.utils.translation import ugettext_lazy as _
 from django.conf import settings as django_settings
 from django.contrib import admin
-from django.contrib.auth.admin import UserAdmin, Group, GroupAdmin
+from django.contrib.auth.admin import Group, GroupAdmin
 from django.contrib.auth import get_user_model
 
+from wagtail.contrib.modeladmin.views import IndexView
+from wagtail.search.backends import get_search_backend
 
 from wagtail.core import hooks
 from wagtail.admin.menu import MenuItem, SubmenuMenuItem, Menu
@@ -187,3 +192,5 @@ for app in app_list:
                         order=10000,
                     )
                     return item
+
+

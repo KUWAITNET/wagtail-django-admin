@@ -1,0 +1,169 @@
+{% extends "modeladmin/index_custom.html" %}
+{% load static i18n admin_list modeladmin_tags wagtailadmin_tags wagtail_admin_tags %}
+
+{% block extra_js %}
+    {{ block.super }}
+    {{ media.js }}
+
+{% endblock %}
+
+{% block css %}
+    {{ block.super }}
+    {{ media.css }}
+{% endblock %}
+
+{% block search %}
+    {% search_form %}
+    <script>
+        // this is script for autoupdating of search results
+        let searchDelay;    // will contain a timeout instance
+        function setSearchTimeout() {
+            searchDelay = setTimeout(function () { 
+                $('#refresh-on-search').load(document.URL + ' #refresh-on-search')
+            }, 500);
+        };
+        function clearSearchTimeout() { clearTimeout(searchDelay); };
+
+        $(document).ready( function () {   
+            // call this, if input is updated
+            $('#id_q').on("paste keyup", function() {
+                clearSearchTimeout();  // reset timeout on input
+
+                let newUrl = new URL( document.URL );
+                if ( !$(this).val() ) { newUrl.searchParams.delete( 'q' ); }
+                else { newUrl.searchParams.set( 'q', $(this).val() ); }
+                newUrl = newUrl.toString();
+
+                let obj = { Title: document.title, Url: newUrl };  
+                history.pushState(obj, obj.Title, newUrl);
+                
+                setSearchTimeout();
+            });
+        });
+    </script>
+{% endblock %}
+                    
+{% block content_main %}
+    <div id="refresh-on-search">
+        {% block date_filter %}
+        <div class="xfull">
+            <ul class="toplinks">
+                {% if current_day %}
+                    {% if request.GET.q %}<div>{{ request.GET.q }}</div>{% endif %}
+                    <a href="?{{ field }}__year={{ current_year }}&{{ field }}__month={{ current_month }}">&larr; {{ month_select }}, {{ current_year }} </a>
+                    <li><span style="margin-left: 1rem;">{{ month_select }} {{ current_day }}, {{ current_year }}</span></li>
+                    
+                {% elif days %}
+                    <a href="?{{ field }}__year={{ current_year }}">&larr; {{ current_year }}</a>
+                    <span style="margin-left: 1rem;">
+                    {% for day in days %}
+                        <li><a href="?{{ field }}__year={{ current_year }}&{{ field }}__month={{ current_month }}&{{ field }}__day={{ day }}">{{ month_select }} {{ day }}, {{ current_year }}</a></li>
+                    {% endfor %}
+                    </span>
+                {% elif months and current_year %}
+                    <a href="?">&larr; All Years</a>
+                    <span style="margin-left: 1rem;">
+                    {% for month in months %}
+                        <li><a href="?{{ field }}__year={{ current_year }}&{{ field }}__month={{ month.0 }}">{{ month.1 }}, {{ current_year }}</a></li>
+                    {% endfor %}
+                    </span>
+                {% else %}
+                    <!-- Filter by<span style="background-color: azure; padding: 0.5rem; border-radius: 0.1rem; text-transform: uppercase;"> {{ field }}</span>:
+                    <span style="margin-left: 1rem;"> -->
+                    {% if current_year and field == "year" %}
+                        <a href="?">&larr; All Years</a>
+                    {% endif %}
+
+                    {% for year in years %}
+                        <li> <a href="?{% if field == 'year' %}{{ field }}{% else %}{{ field }}__year{% endif %}={{ year }}">{{ year }}</a></li>
+                    {% endfor %}
+                    <!--/span-->
+                {% endif %}
+            </ul><br class="clear">
+            <script>
+                $('.toplinks a').click( function ( e ) {
+                    e.preventDefault();
+                    let newUrl = new URL( document.URL );
+                    newUrl = document.URL.split('?')[0] + $(this).attr('href')
+
+                    let obj = { Title: document.title, Url: newUrl };  
+                    history.pushState(obj, obj.Title, newUrl);
+
+                    $("#refresh-on-search").load(document.URL + " #refresh-on-search", "");
+                });
+            </script>
+        </div>
+        {% endblock %}
+
+        <form id="changelist-form" method="post"{% if cl.formset and cl.formset.is_multipart %} enctype="multipart/form-data"{% endif %} novalidate>{% csrf_token %}
+            
+            <div>
+                <div class="row">
+                    {% block content_cols %}
+                        {{ block.super }}
+                        {% comment %} {% block filters %}
+                            {% if view.has_filters and all_count %}
+                            <div class="changelist-filter col3">
+                                <h2>{% trans 'Filter' %}</h2>
+                                {% for spec in view.filter_specs %}{% admin_list_filter view spec %}{% endfor %}
+                            </div>
+                            {% endif %}
+                        {% endblock %}
+
+                        <div class="result-list {% if view.has_filters and all_count %}col9{% else %}col12{% endif %}">
+                            {% block result_list %}
+                                {% if not all_count %}
+                                    <div class="nice-padding" style="margin-top:30px;">
+                                        {% if no_valid_parents %}
+                                            <p>{% blocktrans with view.verbose_name_plural as name %}No {{ name }} have been created yet. One of the following must be created before you can add any {{ name }}:{% endblocktrans %}</p>
+                                            <ul>
+                                                {% for type in required_parent_types %}<li><b>{{ type|title }}</b></li>{% endfor %}
+                                            </ul>
+                                        {% else %}
+                                            <p>{% blocktrans with view.verbose_name_plural as name %}No {{ name }} have been created yet.{% endblocktrans %}
+                                            {% if user_can_create %}
+                                                {% blocktrans with view.create_url as url %}
+                                                    Why not <a href="{{ url }}">add one</a>?
+                                                {% endblocktrans %}
+                                            {% endif %}</p>
+                                        {% endif %}
+                                    </div>
+                                {% else %}
+                                    {% result_list %}
+                                {% endif %}
+                            {% endblock %}
+                        </div>
+                        
+                        {% block pagination %}
+                            {% if all_count %}
+                                <nav class="pagination {% if view.has_filters and all_count %}col9{% else %}col12{% endif %}" aria-label="{% trans 'Pagination' %}">
+                                    <p>{% blocktrans with page_obj.number as current_page and paginator.num_pages as num_pages %}Page {{ current_page }} of {{ num_pages }}.{% endblocktrans %}</p>
+                                    <div>
+                                        <p>Total Entries: {{ result_count }}</p>
+                                    </div>
+                                    {% if paginator.num_pages > 1 %}
+                                        <ul>
+                                            {% pagination_link_previous page_obj view %}
+                                            {% pagination_link_next page_obj view %}
+                                        </ul>
+                                    {% endif %}
+
+                                </nav>
+                            {% endif %}
+                            {% endblock %} {% endcomment %}
+                        
+
+                    {% endblock %}
+                </div>
+                <ui class="fields">
+                    {% if  all_count and "/change_order/" not in request.path %}
+                        {% wagtail_admin_actions %}
+                    {% endif %}
+                </ui>
+                
+            </div>
+            
+        </form>    
+    </div>
+{% endblock %}
+
