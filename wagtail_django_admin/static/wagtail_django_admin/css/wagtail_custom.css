@@ -12,3 +12,7 @@
     text-decoration: none;
     border-radius: 0.18571rem;
 }
+
+.result-list {
+    overflow: auto
+}
