@@ -1,0 +1,118 @@
+body {
+    direction: rtl;
+}
+.nav-wrapper {
+    margin-right: -200px;
+    float: right;
+}
+.content-wrapper {
+    float: right;
+}
+.nav-main .menu-item a {
+    border-left: 0;
+    border-right: 3px solid transparent;
+}
+.nav-main .menu-item a:before {
+    margin-right: 0;
+    margin-left: .5em;
+}
+.nav-submenu .menu-item a .icon--menuitem {
+    margin-left: 0;
+}
+.nav-main .menu-item a:after {
+    right: auto;
+    left: .5em;
+}
+.breadcrumb li {
+    float: right;
+}
+.breadcrumb li a:after, .breadcrumb li span:after {
+    left: -0.5em;
+    right: auto !important;
+    padding-left: 0;
+    padding-right: 20px;
+    content: " / ";
+}
+.tab-nav li {
+    float: right;
+}
+.tab-nav li:first-of-type {
+    padding-left: 0;
+    padding-right: 1.2em;
+}
+.required .field>label:after {
+    margin-left: 0;
+    margin-right: 0.5em;
+}
+.listing thead th {
+    text-align: right;
+}
+.summary ul.stats li,
+.summary ul.stats li:before {
+    float: right !important;
+}
+.hallotoolbar [class*=" icon-"]:before, 
+.hallotoolbar [class^=icon-], 
+.hallotoolbar [class^=icon-]:before, 
+.icon:after{
+    text-align: right;
+    margin-right: 0;
+    margin-left: .2em;
+}
+.icon:before {
+    text-align: right;
+}
+.page-explorer .listing .index .privacy-indicator {
+    right: auto;
+    left: 10%;
+}
+.tab-nav li.settings a:before {
+    margin-right: 0;
+    margin-left: .5em;
+}
+/* colors */
+/* header  {
+    background-color: #fff;
+    border-bottom: 1px solid #333;
+}
+header * {
+    color: #333 !important;
+} */
+@media screen and (min-width: 50em) {
+    .wrapper, body.nav-open .wrapper {
+        padding-left: 0;
+        padding-right: 200px;
+    }
+    .nav-wrapper {
+        right: 0;
+        left: auto;
+        margin-right: 0;
+    }
+    .explorer {
+        left: auto;
+        right: 200px;
+    }
+    .nav-submenu {
+            left: auto;
+            right: 200px;
+    }
+    .row-flush {
+        margin-left: 0;
+        margin-right: 0;
+    }
+    .label, label {
+        float: right;
+    }
+    .tab-nav li {
+        margin-left: 0;
+        margin-right: 0.7em;
+    }
+    header .col, [class*="col"],
+    header .left:first-child {
+        /* float: right; */
+    }
+    .addbutton {
+        position: absolute;
+        left: 5%;
+    }
+}

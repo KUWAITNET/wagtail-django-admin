@@ -639,11 +639,7 @@ class ActionDateFilterAdminMixin:
 
         # if not self.has_view_or_change_permission(request):
         #     raise PermissionDenied
-
-        model_name = self.model.__name__.lower()
-        if not request.user.has_perms(model_name + ".can_delete_" + model_name):
-            messages.error(request, _("No permission."))
-            return HttpResponse("FAIL, no permission.")
+        
         try:
             cl = self
         except IncorrectLookupParameters:
