@@ -1,8 +1,10 @@
 {% extends "wagtailadmin/base.html" %}
 {% load i18n static jet_tags %}
+{% load cache %}
 {% load wagtailadmin_tags wagtailcore_tags i18n %}
 
 {% jet_get_current_version as JET_VERSION %}
+{% get_current_language as LANGUAGE_CODE %}
 
 {% block extra_css %}
 <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
@@ -52,7 +54,9 @@
                 <span class="u-hidden@sm">{% trans "Dashboard" %}</span>
             </a>
             {% menu_search %}
+            {% cache 1000 main_nav request.user.username|add:LANGUAGE_CODE %}
             {% main_nav %}
+            {% endcache %}
         </div>
         <div class="explorer__wrapper" data-explorer-menu></div>
     </aside>
