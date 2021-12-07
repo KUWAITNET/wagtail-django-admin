@@ -29,7 +29,8 @@ def all_allowed_url(instance, request=None):
                 or model["perms"]["delete"]
                 or model["perms"]["view"]
             ):
-                all_allowed_url.append(model["admin_url"])
+                if "admin_url" in model:
+                    all_allowed_url.append(model["admin_url"])
     return all_allowed_url
 
 
