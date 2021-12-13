@@ -145,3 +145,7 @@ div.form-row.field-permissions div {
 tr.form-row {
     display: table-row !important;
 }
+
+tr.form-row.empty-form {
+    display: none !important;
+}
