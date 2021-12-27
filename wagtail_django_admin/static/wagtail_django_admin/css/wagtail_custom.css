@@ -14,5 +14,18 @@
 }
 
 .result-list {
-    overflow: auto
+    overflow-x: scroll; 
+    overflow-y:hidden;
+}
+
+#top-horizontal-scroller-wrapper {
+    border: none 0px RED;
+    overflow-x: scroll; 
+    overflow-y:hidden;
+}
+#top-horizontal-scroller-wrapper{height: 20px; }
+#top-horizontal-scroller {height: 20px; }
+
+.listing .actions {
+    visibility: visible;
 }
