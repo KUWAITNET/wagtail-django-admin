@@ -1,14 +1,7 @@
-from datetime import datetime
-import calendar
-
 from django.utils.translation import ugettext_lazy as _
 from django.conf import settings as django_settings
-from django.contrib import admin
-from django.contrib.auth.admin import Group, GroupAdmin
-from django.contrib.auth import get_user_model
 
-from wagtail.contrib.modeladmin.views import IndexView
-from wagtail.search.backends import get_search_backend
+from django.contrib.auth import get_user_model
 
 from wagtail.core import hooks
 from wagtail.admin.menu import MenuItem, SubmenuMenuItem, Menu
@@ -17,66 +10,9 @@ from wagtail.core import hooks
 from wagtail.admin.menu import MenuItem, SubmenuMenuItem, Menu
 
 from .utils import url_no_i18n
-from .widgets import TabularPermissionsWidget
-from . import settings
 
 
 User = get_user_model()
-
-
-class UserTabularPermissionsMixin:
-    def formfield_for_manytomany(self, db_field, request=None, **kwargs):
-        field = super(UserTabularPermissionsMixin, self).formfield_for_manytomany(
-            db_field, request, **kwargs
-        )
-        if db_field.name == "user_permissions":
-            field.widget = TabularPermissionsWidget(
-                db_field.verbose_name, db_field.name in self.filter_vertical
-            )
-            field.help_text = ""
-        return field
-
-
-class GroupTabularPermissionsMixin:
-    def formfield_for_manytomany(self, db_field, request=None, **kwargs):
-        field = super(GroupTabularPermissionsMixin, self).formfield_for_manytomany(
-            db_field, request, **kwargs
-        )
-        if db_field.name == "permissions":
-            field.widget = TabularPermissionsWidget(
-                db_field.verbose_name,
-                db_field.name in self.filter_vertical,
-                "permissions",
-            )
-            field.help_text = ""
-        return field
-
-
-class TabularPermissionsUserAdmin(admin.site._registry[User].__class__):
-    def formfield_for_manytomany(self, db_field, request=None, **kwargs):
-        field = super(TabularPermissionsUserAdmin, self).formfield_for_manytomany(
-            db_field, request, **kwargs
-        )
-        if db_field.name == "user_permissions":
-            field.widget = TabularPermissionsWidget(
-                db_field.verbose_name, db_field.name in self.filter_vertical
-            )
-            field.help_text = ""
-        return field
-
-
-class TabularPermissionsGroupAdmin(GroupTabularPermissionsMixin, GroupAdmin):
-    pass
-
-
-# if settings.AUTO_IMPLEMENT:
-#     try:
-# UserAdmin = admin.site._registry[User].__class__
-admin.site.unregister(User)
-admin.site.register(User, TabularPermissionsUserAdmin)
-UserAdmin = admin.site._registry[User].__class__
-admin.site.unregister(Group)
-admin.site.register(Group, TabularPermissionsGroupAdmin)
 
 
 class CustomSubmenuMenuItem(SubmenuMenuItem):
@@ -192,5 +128,3 @@ for app in app_list:
                         order=10000,
                     )
                     return item
-
-
