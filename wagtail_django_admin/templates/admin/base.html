@@ -53,9 +53,9 @@
                 <span class="u-hidden@sm">{% trans "Dashboard" %}</span>
             </a>
             {% menu_search %}
-            {% cache 1000 main_nav request.user.username|add:LANGUAGE_CODE %}
+            {% comment %} {% cache 1000 main_nav request.user.username|add:LANGUAGE_CODE %} {% endcomment %}
             {% main_nav %}
-            {% endcache %}
+            {% comment %} {% endcache %} {% endcomment %}
         </div>
         <div class="explorer__wrapper" data-explorer-menu></div>
     </aside>
