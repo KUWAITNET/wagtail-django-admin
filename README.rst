@@ -14,14 +14,15 @@ from GitHub:
 Usage
 -----
 
-1. Add ``wagtail_django_admin`` then ``django.contrib.admin`` at the end of your ``INSTALLED_APPS``.
+1. Add ``wagtail_django_admin`` before ``wagtail.admin`` at the end of your ``INSTALLED_APPS``.
 
 .. code:: python
 
    INSTALLED_APPS = [
       ...
       "wagtail_django_admin",
-      "django.contrib.admin",
+      "wagtail.admin",
+      ...
    ]
 
 2. In ``settings.py`` you can add the following settings (OPTIONAL). If not defined all apps and all models are considered
@@ -37,4 +38,3 @@ Usage
 .. code:: python
 
    path("^wagtail_django_admin/", include("wagtail_django_admin.urls", "wagtail_django_admin")),
-

@@ -3,11 +3,11 @@ from datetime import datetime
 import calendar
 
 from django.contrib import admin
-from django.urls import reverse, resolve, NoReverseMatch
+from django.urls import resolve, NoReverseMatch, reverse_lazy
 from django.contrib.admin import AdminSite
 from django.utils.text import capfirst
 from django.contrib import admin
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from django.apps.registry import apps
 from django.utils.encoding import smart_text
 from django.utils import translation
@@ -18,20 +18,7 @@ from wagtail.contrib.modeladmin.views import IndexView
 from wagtail.search.backends import get_search_backend
 
 
-
 LANGUAGES = [lang[0] for lang in settings.LANGUAGES]
-
-def reverse_no_i18n(viewname, *args, **kwargs):
-    result = reverse(viewname, *args, **kwargs)
-    if settings.USE_I18N:
-        m = re.match(r"(/[^/]*)(/.*$)", result)
-        url_lang = m.groups()[0][1:]
-        if url_lang in LANGUAGES:
-            return m.groups()[1]
-        else:
-            return result
-    else:
-        return result
 
 
 def url_no_i18n(url, *args, **kwargs):
@@ -81,14 +68,14 @@ def get_app_list(context, order=True):
                 }
                 if perms.get("change", False) or perms.get("add", False):
                     try:
-                        model_dict["admin_url"] = reverse_no_i18n(
+                        model_dict["admin_url"] = reverse_lazy(
                             "admin:%s_%s_changelist" % info, current_app=admin_site.name
                         )
                     except NoReverseMatch:
                         pass
                 if perms.get("add", False):
                     try:
-                        model_dict["add_url"] = reverse_no_i18n(
+                        model_dict["add_url"] = reverse_lazy(
                             "admin:%s_%s_add" % info, current_app=admin_site.name
                         )
                     except NoReverseMatch:
@@ -103,7 +90,7 @@ def get_app_list(context, order=True):
                     app_dict[app_label] = {
                         "name": name,
                         "app_label": app_label,
-                        "app_url": reverse_no_i18n(
+                        "app_url": reverse_lazy(
                             "admin:app_list",
                             kwargs={"app_label": app_label},
                             current_app=admin_site.name,
@@ -129,7 +116,7 @@ def get_admin_site(context):
     try:
         current_resolver = resolve(context.get("request").path)
         index_resolver = resolve(
-            reverse_no_i18n("%s:index" % current_resolver.namespaces[0])
+            reverse_lazy("%s:index" % current_resolver.namespaces[0])
         )
 
         if hasattr(index_resolver.func, "admin_site"):
@@ -143,17 +130,21 @@ def get_admin_site(context):
 
     return admin.site
 
+
 def get_model_instance_label(instance):
     if getattr(instance, "related_label", None):
         return instance.related_label()
     return smart_text(instance)
 
+
 def get_admin_site(context):
     try:
-        current_resolver = resolve(context.get('request').path)
-        index_resolver = resolve(reverse('%s:index' % current_resolver.namespaces[0]))
+        current_resolver = resolve(context.get("request").path)
+        index_resolver = resolve(
+            reverse_lazy("%s:index" % current_resolver.namespaces[0])
+        )
 
-        if hasattr(index_resolver.func, 'admin_site'):
+        if hasattr(index_resolver.func, "admin_site"):
             return index_resolver.func.admin_site
 
         for func_closure in index_resolver.func.__closure__:
@@ -172,13 +163,17 @@ def get_admin_site_name(context):
 def get_possible_language_codes():
     language_code = translation.get_language()
 
-    language_code = language_code.replace('_', '-').lower()
+    language_code = language_code.replace("_", "-").lower()
     language_codes = []
 
     # making dialect part uppercase
-    split = language_code.split('-', 2)
+    split = language_code.split("-", 2)
     if len(split) == 2:
-        language_code = '%s-%s' % (split[0].lower(), split[1].upper()) if split[0] != split[1] else split[0]
+        language_code = (
+            "%s-%s" % (split[0].lower(), split[1].upper())
+            if split[0] != split[1]
+            else split[0]
+        )
 
     language_codes.append(language_code)
 
@@ -196,21 +191,20 @@ def get_model_queryset(admin_site, model, request, preserved_filters=None):
         return
 
     try:
-        changelist_url = reverse('%s:%s_%s_changelist' % (
-            admin_site.name,
-            model._meta.app_label,
-            model._meta.model_name
-        ))
+        changelist_url = reverse_lazy(
+            "%s:%s_%s_changelist"
+            % (admin_site.name, model._meta.app_label, model._meta.model_name)
+        )
     except NoReverseMatch:
         return
 
     changelist_filters = None
 
     if preserved_filters:
-        changelist_filters = preserved_filters.get('_changelist_filters')
+        changelist_filters = preserved_filters.get("_changelist_filters")
 
     if changelist_filters:
-        changelist_url += '?' + changelist_filters
+        changelist_url += "?" + changelist_filters
 
     if model_admin:
         queryset = model_admin.get_queryset(request)
@@ -220,22 +214,37 @@ def get_model_queryset(admin_site, model, request, preserved_filters=None):
     list_display = model_admin.get_list_display(request)
     list_display_links = model_admin.get_list_display_links(request, list_display)
     list_filter = model_admin.get_list_filter(request)
-    search_fields = model_admin.get_search_fields(request) \
-        if hasattr(model_admin, 'get_search_fields') else model_admin.search_fields
-    list_select_related = model_admin.get_list_select_related(request) \
-        if hasattr(model_admin, 'get_list_select_related') else model_admin.list_select_related
+    search_fields = (
+        model_admin.get_search_fields(request)
+        if hasattr(model_admin, "get_search_fields")
+        else model_admin.search_fields
+    )
+    list_select_related = (
+        model_admin.get_list_select_related(request)
+        if hasattr(model_admin, "get_list_select_related")
+        else model_admin.list_select_related
+    )
 
     actions = model_admin.get_actions(request)
     if actions:
-        list_display = ['action_checkbox'] + list(list_display)
+        list_display = ["action_checkbox"] + list(list_display)
 
     ChangeList = model_admin.get_changelist(request)
 
     change_list_args = [
-        request, model, list_display, list_display_links, list_filter,
-        model_admin.date_hierarchy, search_fields, list_select_related,
-        model_admin.list_per_page, model_admin.list_max_show_all,
-        model_admin.list_editable, model_admin]
+        request,
+        model,
+        list_display,
+        list_display_links,
+        list_filter,
+        model_admin.date_hierarchy,
+        search_fields,
+        list_select_related,
+        model_admin.list_per_page,
+        model_admin.list_max_show_all,
+        model_admin.list_editable,
+        model_admin,
+    ]
 
     try:
         sortable_by = model_admin.get_sortable_by(request)
@@ -259,7 +268,7 @@ class DateFilterIndexViewMixin(IndexView):
     """
 
     field_name = "created"
-    
+
     def get_template_names(self):
         return "modeladmin/admin/index_date_filter.html"
 
@@ -313,7 +322,9 @@ class DateFilterIndexViewMixin(IndexView):
 
             # if provided field is not a date
             if self.field_name == "year":
-                data["years"] = list(set(self.get_queryset().values_list("year", flat=True)))
+                data["years"] = list(
+                    set(self.get_queryset().values_list("year", flat=True))
+                )
             else:
                 try:
                     self.get_queryset().dates(self.field_name, "year")
@@ -372,7 +383,7 @@ from django.http.response import (
     HttpResponseBase,
     HttpResponseNotAllowed,
     HttpResponseRedirect,
-    HttpResponse
+    HttpResponse,
 )
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.utils.safestring import mark_safe
@@ -639,7 +650,7 @@ class ActionDateFilterAdminMixin:
 
         # if not self.has_view_or_change_permission(request):
         #     raise PermissionDenied
-        
+
         try:
             cl = self
         except IncorrectLookupParameters:

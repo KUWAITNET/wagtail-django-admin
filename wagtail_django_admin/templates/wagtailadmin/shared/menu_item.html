@@ -1,0 +1,10 @@
+{% load i18n wagtailadmin_tags wagtail_admin_tags %}
+
+<li class="menu-item{% if active %} menu-active{% endif %}">
+    <a href="{{ url|correct_i18n:request.LANGUAGE_CODE }}"
+       class="{{ classnames }}"
+       {{ attr_string }}>
+        {% if icon_name %}{% icon icon_name 'icon--menuitem' %}{% endif %}
+        {% trans label %}
+    </a>
+</li>
