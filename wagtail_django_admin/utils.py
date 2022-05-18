@@ -3,7 +3,7 @@ from datetime import datetime
 import calendar
 
 from django.contrib import admin
-from django.urls import resolve, NoReverseMatch, reverse_lazy
+from django.urls import resolve, NoReverseMatch, reverse_lazy, reverse
 from django.contrib.admin import AdminSite
 from django.utils.text import capfirst
 from django.contrib import admin
@@ -68,14 +68,14 @@ def get_app_list(context, order=True):
                 }
                 if perms.get("change", False) or perms.get("add", False):
                     try:
-                        model_dict["admin_url"] = reverse_lazy(
+                        model_dict["admin_url"] = reverse(
                             "admin:%s_%s_changelist" % info, current_app=admin_site.name
                         )
                     except NoReverseMatch:
                         pass
                 if perms.get("add", False):
                     try:
-                        model_dict["add_url"] = reverse_lazy(
+                        model_dict["add_url"] = reverse(
                             "admin:%s_%s_add" % info, current_app=admin_site.name
                         )
                     except NoReverseMatch:
@@ -90,7 +90,7 @@ def get_app_list(context, order=True):
                     app_dict[app_label] = {
                         "name": name,
                         "app_label": app_label,
-                        "app_url": reverse_lazy(
+                        "app_url": reverse(
                             "admin:app_list",
                             kwargs={"app_label": app_label},
                             current_app=admin_site.name,
@@ -116,7 +116,7 @@ def get_admin_site(context):
     try:
         current_resolver = resolve(context.get("request").path)
         index_resolver = resolve(
-            reverse_lazy("%s:index" % current_resolver.namespaces[0])
+            reverse("%s:index" % current_resolver.namespaces[0])
         )
 
         if hasattr(index_resolver.func, "admin_site"):
@@ -141,7 +141,7 @@ def get_admin_site(context):
     try:
         current_resolver = resolve(context.get("request").path)
         index_resolver = resolve(
-            reverse_lazy("%s:index" % current_resolver.namespaces[0])
+            reverse("%s:index" % current_resolver.namespaces[0])
         )
 
         if hasattr(index_resolver.func, "admin_site"):
@@ -191,7 +191,7 @@ def get_model_queryset(admin_site, model, request, preserved_filters=None):
         return
 
     try:
-        changelist_url = reverse_lazy(
+        changelist_url = reverse(
             "%s:%s_%s_changelist"
             % (admin_site.name, model._meta.app_label, model._meta.model_name)
         )
