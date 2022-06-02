@@ -17,11 +17,11 @@
                     {% block filters %}
                     {{ block.super }}
                     {% endblock %}
-                    <div id="top-horizontal-scroller-wrapper" class="result-list aaaa {% if view.has_filters and all_count %}col9{% else %}col12{% endif %}">
+                    <div id="top-horizontal-scroller-wrapper" class="result-list {% if view.has_filters and all_count %}col9{% else %}col12{% endif %}">
                         <div id="top-horizontal-scroller" >
                         </div>
                     </div>
-                    <div id="result-list-id" class="result-list aaaa {% if view.has_filters and all_count %}col9{% else %}col12{% endif %}">
+                    <div id="result-list-id" class="result-list {% if view.has_filters and all_count %}col9{% else %}col12{% endif %}">
                         {% block result_list %}
                             {% if not all_count %}
                                 <div class="nice-padding" style="margin-top:30px;">
@@ -52,7 +52,6 @@
                         let box = document.querySelector('.listing');
                         let width = box.offsetWidth;
                         scroller.style.width = String(width) + "px";
-                        console.log("11111111111: ", width)
                         scroller_wrapper1.onscroll = function() {
                             table_scroller.scrollLeft = scroller_wrapper1.scrollLeft;
                         };

@@ -17,6 +17,7 @@
 {% endblock %}
 
 {% block js %}
+<script defer src="{% versioned_static 'wagtailadmin/js/bulk-actions.js' %}"></script>
     <script>
         (function(document, window) {
             window.wagtailConfig = window.wagtailConfig || {};

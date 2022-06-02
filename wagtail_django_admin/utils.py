@@ -7,6 +7,7 @@ from django.contrib import admin, messages
 from django.urls import resolve, NoReverseMatch, reverse
 from django.utils.text import capfirst
 from django.apps.registry import apps
+from django.contrib.admin.models import DELETION, LogEntry
 from django.utils.encoding import smart_str
 from django.conf import settings
 from django.forms import forms
@@ -17,7 +18,6 @@ from django.http.response import (
     HttpResponseRedirect,
 )
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.utils.safestring import mark_safe
 
 from django.contrib.admin.views.main import ERROR_FLAG
 from django.template.response import SimpleTemplateResponse
@@ -390,18 +390,6 @@ class ActionDateFilterAdminMixin:
     media = None
 
     # the methods below is copied from django/contrib/admin/options.py
-    def action_checkbox(self, obj):
-        """
-        A list_display column containing a checkbox widget.
-        """
-        return admin.helpers.checkbox.render(
-            admin.helpers.ACTION_CHECKBOX_NAME, str(obj.pk)
-        )
-
-    action_checkbox.short_description = mark_safe(
-        '<input type="checkbox" id="action-toggle">'
-    )
-
     def get_action_choices(self, request, default_choices=models.BLANK_CHOICE_DASH):
         """
         Return a list of choices for use in a form object.  Each choice is a
@@ -450,8 +438,6 @@ class ActionDateFilterAdminMixin:
 
         The default implementation creates an admin LogEntry object.
         """
-        from django.contrib.admin.models import DELETION, LogEntry
-
         return LogEntry.objects.log_action(
             user_id=request.user.pk,
             content_type_id=admin.options.get_content_type_for_model(object).pk,
@@ -509,26 +495,6 @@ class ActionDateFilterAdminMixin:
         # Add actions from this ModelAdmin.
         actions.extend(base_actions)
         return actions
-
-    def get_list_display(self, request):
-        """
-        Return a sequence containing the fields to be displayed on the
-        changelist.
-        """
-        if (
-            self.list_display
-            and "action_checkbox" not in self.list_display
-            and "/change_order/" not in request.path
-        ):
-            self.list_display = ["action_checkbox", *self.list_display]
-        elif (
-            self.list_display
-            and "action_checkbox" in self.list_display
-            and "/change_order/" in request.path
-        ):
-            self.list_display.remove("action_checkbox")
-
-        return self.list_display
 
     def get_actions(self, request):
         """
@@ -629,7 +595,6 @@ class ActionDateFilterAdminMixin:
     def index_view(self, request):
         response = super().index_view(request)
         opts = self.model._meta
-        app_label = opts.app_label
 
         # if not self.has_view_or_change_permission(request):
         #     raise PermissionDenied
