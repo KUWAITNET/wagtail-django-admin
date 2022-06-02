@@ -1,9 +1,9 @@
 from __future__ import unicode_literals
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext_lazy as _
 
 
 def get_perm_name(model_name, perm_name):
-    return '%s_%s' % (perm_name, model_name)
+    return "%s_%s" % (perm_name, model_name)
 
 
 def dummy_permissions_exclude(model):

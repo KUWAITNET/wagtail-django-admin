@@ -14,7 +14,7 @@ from django.forms import (
 from django.contrib.admin.widgets import RelatedFieldWidgetWrapper
 from django.utils.formats import get_format
 from django.utils.safestring import mark_safe
-from django.utils.encoding import smart_text
+from django.utils.encoding import smart_str
 
 
 from urllib.parse import parse_qsl
@@ -230,7 +230,7 @@ def jet_popup_response_data(context):
         {
             "action": context.get("action"),
             "value": context.get("value") or context.get("pk_value"),
-            "obj": smart_text(context.get("obj")),
+            "obj": smart_str(context.get("obj")),
             "new_value": context.get("new_value"),
         }
     )

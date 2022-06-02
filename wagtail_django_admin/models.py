@@ -1,4 +1,3 @@
-from django.db import models
 from django.contrib.auth import get_user_model
 
 from .utils import get_app_list

@@ -77,14 +77,33 @@ for app in app_list:
 
         @hooks.register("register_admin_menu_item")
         def register_wagtail_django_admin_menu(
-            app_name=app_menu_name, wagtail_django_admin_menu=wagtail_django_admin_menu
+            app_name=app_name,
+            app_menu_name=app_menu_name,
+            wagtail_django_admin_menu=wagtail_django_admin_menu,
         ):
+            if (
+                app_name in WAGTAIL_ADMIN_CUSTOM_MENU
+                and isinstance(WAGTAIL_ADMIN_CUSTOM_MENU[app_name], dict)
+                and "order" in WAGTAIL_ADMIN_CUSTOM_MENU[app_name]
+            ):
+                order = WAGTAIL_ADMIN_CUSTOM_MENU[app_name]["order"]
+            else:
+                order = 10000
+
+            if (
+                app_name in WAGTAIL_ADMIN_CUSTOM_MENU
+                and isinstance(WAGTAIL_ADMIN_CUSTOM_MENU[app_name], dict)
+                and "icon_name" in WAGTAIL_ADMIN_CUSTOM_MENU[app_name]
+            ):
+                icon_name = WAGTAIL_ADMIN_CUSTOM_MENU[app_name]["icon_name"]
+            else:
+                icon_name = "folder-inverse"
 
             return CustomSubmenuMenuItem(
-                _(app_name),
+                _(app_menu_name),
                 wagtail_django_admin_menu,
-                icon_name="folder-inverse",
-                order=10000,
+                icon_name=icon_name,
+                order=order,
             )
 
         for model in app["models"]:
@@ -92,39 +111,69 @@ for app in app_list:
             object_name = str(model["object_name"])
             model_menu_name = str(model["name"])
             admin_url = model["admin_url"]
-            if (
-                (
-                    hasattr(django_settings, "WAGTAIL_ADMIN_CUSTOM_MENU")
-                    and type(django_settings.WAGTAIL_ADMIN_CUSTOM_MENU) is dict
-                    and app_name in django_settings.WAGTAIL_ADMIN_CUSTOM_MENU.keys()
-                    and type(django_settings.WAGTAIL_ADMIN_CUSTOM_MENU[app_name])
-                    is list
+            if not hasattr(django_settings, "WAGTAIL_ADMIN_CUSTOM_MENU") or (
+                hasattr(django_settings, "WAGTAIL_ADMIN_CUSTOM_MENU")
+                and isinstance(django_settings.WAGTAIL_ADMIN_CUSTOM_MENU, dict)
+                and app_name in django_settings.WAGTAIL_ADMIN_CUSTOM_MENU
+                and (
+                    isinstance(
+                        django_settings.WAGTAIL_ADMIN_CUSTOM_MENU[app_name], list
+                    )
                     and (
                         model_name
                         in django_settings.WAGTAIL_ADMIN_CUSTOM_MENU[app_name]
                         or object_name
                         in django_settings.WAGTAIL_ADMIN_CUSTOM_MENU[app_name]
+                        or not django_settings.WAGTAIL_ADMIN_CUSTOM_MENU[app_name]
                     )
-                )
-                or not hasattr(django_settings, "WAGTAIL_ADMIN_CUSTOM_MENU")
-                or (
-                    hasattr(django_settings, "WAGTAIL_ADMIN_CUSTOM_MENU")
-                    and type(django_settings.WAGTAIL_ADMIN_CUSTOM_MENU) is dict
-                    and app_name in django_settings.WAGTAIL_ADMIN_CUSTOM_MENU.keys()
-                    and type(django_settings.WAGTAIL_ADMIN_CUSTOM_MENU[app_name])
-                    is list
-                    and not django_settings.WAGTAIL_ADMIN_CUSTOM_MENU[app_name]
+                    or isinstance(
+                        django_settings.WAGTAIL_ADMIN_CUSTOM_MENU[app_name], dict
+                    )
+                    and "models" in django_settings.WAGTAIL_ADMIN_CUSTOM_MENU[app_name]
+                    and (
+                        model_name
+                        in django_settings.WAGTAIL_ADMIN_CUSTOM_MENU[app_name]["models"]
+                        or object_name
+                        in django_settings.WAGTAIL_ADMIN_CUSTOM_MENU[app_name]
+                        or not django_settings.WAGTAIL_ADMIN_CUSTOM_MENU[app_name][
+                            "models"
+                        ]
+                    )
                 )
             ):
 
                 @hooks.register("register_wagtail_django_admin_menu_item" + app_name)
                 def register_users_menu_item(
-                    model_name=model_menu_name, admin_url=admin_url
+                    model_name=model_name,
+                    model_menu_name=model_menu_name,
+                    admin_url=admin_url,
+                    app_name=app_name,
                 ):
+                    try:
+                        order = WAGTAIL_ADMIN_CUSTOM_MENU[app_name]["models"][
+                            model_name
+                        ]["order"]
+                    except (KeyError, TypeError):
+                        try:
+                            order = WAGTAIL_ADMIN_CUSTOM_MENU[app_name]["models"][
+                                object_name
+                            ]["order"]
+                        except (KeyError, TypeError):
+                            order = 10000
+
+                    try:
+                        icon_name = WAGTAIL_ADMIN_CUSTOM_MENU[app_name]["models"][
+                            model_name
+                        ]["icon_name"]
+                    except (KeyError, TypeError):
+                        try:
+                            icon_name = WAGTAIL_ADMIN_CUSTOM_MENU[app_name]["models"][
+                                object_name
+                            ]["icon_name"]
+                        except (KeyError, TypeError):
+                            icon_name = "folder-inverse"
+
                     item = CustomMenuItem(
-                        _(model_name),
-                        admin_url,
-                        icon_name="folder-inverse",
-                        order=10000,
+                        _(model_menu_name), admin_url, icon_name=icon_name, order=order,
                     )
                     return item

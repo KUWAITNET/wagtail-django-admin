@@ -21,6 +21,7 @@ Usage
    INSTALLED_APPS = [
       ...
       "wagtail_django_admin",
+      "django.contrib.admin",
       "wagtail.admin",
       ...
    ]
@@ -33,7 +34,28 @@ Usage
       "<app_name>": [..., "<model_name>", ...]
    }
 
-3. In project ``urls.py`` add the following line:
+
+More advanced option if you want to control the order an icon_name
+
+.. code:: python
+
+   WAGTAIL_ADMIN_CUSTOM_MENU = {
+      "<app_name>": [
+         ...
+         {
+            "order": 200,
+            "icon_name": "list-ul",
+            "models": {
+               ...
+               "<model_name>": {"order": 200, "icon_name": "mail"},
+               ...
+            },
+         }
+         ...
+      ]
+   }
+
+1. In project ``urls.py`` add the following line:
    
 .. code:: python
 

@@ -2,17 +2,25 @@ import re
 from datetime import datetime
 import calendar
 
-from django.contrib import admin
-from django.urls import resolve, NoReverseMatch, reverse_lazy, reverse
-from django.contrib.admin import AdminSite
+from django.db import models
+from django.contrib import admin, messages
+from django.urls import resolve, NoReverseMatch, reverse
 from django.utils.text import capfirst
-from django.contrib import admin
-from django.utils.translation import gettext_lazy as _
 from django.apps.registry import apps
-from django.utils.encoding import smart_text
-from django.utils import translation
-from django.contrib.admin.options import IncorrectLookupParameters
+from django.utils.encoding import smart_str
 from django.conf import settings
+from django.forms import forms
+from django.utils.translation import gettext_lazy as _, ngettext, activate, get_language
+from django.http.response import (
+    HttpResponseBase,
+    HttpResponseNotAllowed,
+    HttpResponseRedirect,
+)
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.utils.safestring import mark_safe
+
+from django.contrib.admin.views.main import ERROR_FLAG
+from django.template.response import SimpleTemplateResponse
 
 from wagtail.contrib.modeladmin.views import IndexView
 from wagtail.search.backends import get_search_backend
@@ -36,7 +44,7 @@ def url_no_i18n(url, *args, **kwargs):
 def get_app_list(context, order=True):
     admin_site = get_admin_site(context)
     request = context["request"]
-    translation.activate("en")
+    activate("en")
     app_dict = {}
     for model, model_admin in admin_site._registry.items():
         app_label = model._meta.app_label
@@ -115,15 +123,13 @@ def get_app_list(context, order=True):
 def get_admin_site(context):
     try:
         current_resolver = resolve(context.get("request").path)
-        index_resolver = resolve(
-            reverse("%s:index" % current_resolver.namespaces[0])
-        )
+        index_resolver = resolve(reverse("%s:index" % current_resolver.namespaces[0]))
 
         if hasattr(index_resolver.func, "admin_site"):
             return index_resolver.func.admin_site
 
         for func_closure in index_resolver.func.__closure__:
-            if isinstance(func_closure.cell_contents, AdminSite):
+            if isinstance(func_closure.cell_contents, admin.AdminSite):
                 return func_closure.cell_contents
     except:
         pass
@@ -134,21 +140,19 @@ def get_admin_site(context):
 def get_model_instance_label(instance):
     if getattr(instance, "related_label", None):
         return instance.related_label()
-    return smart_text(instance)
+    return smart_str(instance)
 
 
 def get_admin_site(context):
     try:
         current_resolver = resolve(context.get("request").path)
-        index_resolver = resolve(
-            reverse("%s:index" % current_resolver.namespaces[0])
-        )
+        index_resolver = resolve(reverse("%s:index" % current_resolver.namespaces[0]))
 
         if hasattr(index_resolver.func, "admin_site"):
             return index_resolver.func.admin_site
 
         for func_closure in index_resolver.func.__closure__:
-            if isinstance(func_closure.cell_contents, AdminSite):
+            if isinstance(func_closure.cell_contents, admin.AdminSite):
                 return func_closure.cell_contents
     except:
         pass
@@ -161,7 +165,7 @@ def get_admin_site_name(context):
 
 
 def get_possible_language_codes():
-    language_code = translation.get_language()
+    language_code = get_language()
 
     language_code = language_code.replace("_", "-").lower()
     language_codes = []
@@ -256,7 +260,7 @@ def get_model_queryset(admin_site, model, request, preserved_filters=None):
     try:
         cl = ChangeList(*change_list_args)
         queryset = cl.get_queryset(request)
-    except IncorrectLookupParameters:
+    except admin.options.IncorrectLookupParameters:
         pass
 
     return queryset
@@ -374,34 +378,11 @@ class DateFilterIndexViewMixin(IndexView):
         return data
 
 
-from django.conf import settings
-from django.forms import forms
-from django.contrib import admin, messages
-from django.utils.translation import gettext as _, ngettext
-from django.contrib.admin.utils import get_deleted_objects
-from django.http.response import (
-    HttpResponseBase,
-    HttpResponseNotAllowed,
-    HttpResponseRedirect,
-    HttpResponse,
-)
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.utils.safestring import mark_safe
-from django.contrib.admin import helpers
-from django.contrib.admin.options import get_content_type_for_model
-from django.db import models
-from django.contrib.admin.utils import model_format_dict
-from django.http.response import HttpResponseBase
-from django.http import HttpResponseRedirect
-from django.contrib.admin.views.main import ERROR_FLAG
-from django.template.response import SimpleTemplateResponse, TemplateResponse
-
-
 class ActionDateFilterAdminMixin:
     index_view_class = DateFilterIndexViewMixin
 
     actions = []
-    action_form = helpers.ActionForm
+    action_form = admin.helpers.ActionForm
     actions_selection_counter = True
     delete_selected_confirmation_template = (
         "modeladmin/delete_selected_confirmation.html"
@@ -413,7 +394,9 @@ class ActionDateFilterAdminMixin:
         """
         A list_display column containing a checkbox widget.
         """
-        return helpers.checkbox.render(helpers.ACTION_CHECKBOX_NAME, str(obj.pk))
+        return admin.helpers.checkbox.render(
+            admin.helpers.ACTION_CHECKBOX_NAME, str(obj.pk)
+        )
 
     action_checkbox.short_description = mark_safe(
         '<input type="checkbox" id="action-toggle">'
@@ -426,7 +409,7 @@ class ActionDateFilterAdminMixin:
         """
         choices = [] + default_choices
         for func, name, description in self.get_actions(request).values():
-            choice = (name, description % model_format_dict(self.opts))
+            choice = (name, description % admin.utils.model_format_dict(self.opts))
             choices.append(choice)
         return choices
 
@@ -471,7 +454,7 @@ class ActionDateFilterAdminMixin:
 
         return LogEntry.objects.log_action(
             user_id=request.user.pk,
-            content_type_id=get_content_type_for_model(object).pk,
+            content_type_id=admin.options.get_content_type_for_model(object).pk,
             object_id=object.pk,
             object_repr=object_repr,
             action_flag=DELETION,
@@ -567,7 +550,7 @@ class ActionDateFilterAdminMixin:
         Hook for customizing the delete process for the delete view and the
         "delete selected" action.
         """
-        return get_deleted_objects(objs, request, self.admin_site)
+        return admin.utils.get_deleted_objects(objs, request, self.admin_site)
 
     def response_action(self, request, queryset):
         """
@@ -586,7 +569,7 @@ class ActionDateFilterAdminMixin:
 
         # Construct the action form.
         data = request.POST.copy()
-        data.pop(helpers.ACTION_CHECKBOX_NAME, None)
+        data.pop(admin.helpers.ACTION_CHECKBOX_NAME, None)
         data.pop("index", None)
 
         # Use the action whose button was pushed
@@ -610,7 +593,7 @@ class ActionDateFilterAdminMixin:
             # Get the list of selected PKs. If nothing's selected, we can't
             # perform an action on it, so bail. Except we want to perform
             # the action explicitly on all objects.
-            selected = request.POST.getlist(helpers.ACTION_CHECKBOX_NAME)
+            selected = request.POST.getlist(admin.helpers.ACTION_CHECKBOX_NAME)
 
             if not selected and not select_across:
                 # Reminder that something needs to be selected or nothing will happen
@@ -653,7 +636,7 @@ class ActionDateFilterAdminMixin:
 
         try:
             cl = self
-        except IncorrectLookupParameters:
+        except admin.options.IncorrectLookupParameters:
             # Wacky lookup parameters were given, so redirect to the main
             # changelist page, without parameters, and pass an 'invalid=1'
             # parameter via the query string. If wacky parameters were given
@@ -673,7 +656,7 @@ class ActionDateFilterAdminMixin:
         # below.
 
         action_failed = False
-        selected = request.POST.getlist(helpers.ACTION_CHECKBOX_NAME)
+        selected = request.POST.getlist(admin.helpers.ACTION_CHECKBOX_NAME)
         actions = self.get_actions(request)
 
         # Actions with no confirmation
@@ -702,7 +685,7 @@ class ActionDateFilterAdminMixin:
         if (
             actions
             and request.method == "POST"
-            and helpers.ACTION_CHECKBOX_NAME in request.POST
+            and admin.helpers.ACTION_CHECKBOX_NAME in request.POST
             and "index" not in request.POST
             and "_save" not in request.POST
         ):
