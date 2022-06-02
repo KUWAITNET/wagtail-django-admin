@@ -23,10 +23,9 @@ Usage
       "wagtail_django_admin",
       "django.contrib.admin",
       "wagtail.admin",
-      ...
    ]
 
-2. In ``settings.py`` you can add the following settings (OPTIONAL). If not defined all apps and all models are considered
+1. In ``settings.py`` you can add the following settings (OPTIONAL). If not defined all apps and all models are considered
 
 .. code:: python
 
@@ -35,7 +34,7 @@ Usage
    }
 
 
-More advanced option if you want to control the order an icon_name
+More advanced option if you want to control the order and icon_name
 
 .. code:: python
 
@@ -55,7 +54,7 @@ More advanced option if you want to control the order an icon_name
       ]
    }
 
-1. In project ``urls.py`` add the following line:
+3. In project ``urls.py`` add the following line:
    
 .. code:: python
 
