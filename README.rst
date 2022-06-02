@@ -20,9 +20,9 @@ Usage
 
    INSTALLED_APPS = [
       ...
+      "wagtail.admin",
       "wagtail_django_admin",
       "django.contrib.admin",
-      "wagtail.admin",
    ]
 
 1. In ``settings.py`` you can add the following settings (OPTIONAL). If not defined all apps and all models are considered
