@@ -43,7 +43,9 @@ class CustomInclusionAdminNode(InclusionNode):
         # Load template for this render call. (Setting self.filename isn't
         # thread-safe.)
         context.render_context[self] = context.template.engine.select_template(
-            [self.template_name,]
+            [
+                self.template_name,
+            ]
         )
         return super().render(context)
 
@@ -80,3 +82,27 @@ def correct_i18n(url, lang_code):
             return url
     else:
         return url
+
+
+@register.simple_tag()
+def slim_sidebar_enabled():
+    try:
+        from wagtail.admin.templatetags.wagtailadmin_tags import (
+            slim_sidebar_enabled as wagtail_slim_sidebar_enabled,
+        )
+
+        return wagtail_slim_sidebar_enabled()
+    except Exception:
+        return
+
+
+@register.simple_tag(takes_context=True)
+def sidebar_props(context):
+    try:
+        from wagtail.admin.templatetags.wagtailadmin_tags import (
+            sidebar_props as wagtail_sidebar_props,
+        )
+
+        return wagtail_sidebar_props(context)
+    except Exception:
+        return

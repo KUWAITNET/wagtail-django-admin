@@ -131,7 +131,7 @@ def get_admin_site(context):
         for func_closure in index_resolver.func.__closure__:
             if isinstance(func_closure.cell_contents, admin.AdminSite):
                 return func_closure.cell_contents
-    except:
+    except Exception:
         pass
 
     return admin.site
@@ -141,23 +141,6 @@ def get_model_instance_label(instance):
     if getattr(instance, "related_label", None):
         return instance.related_label()
     return smart_str(instance)
-
-
-def get_admin_site(context):
-    try:
-        current_resolver = resolve(context.get("request").path)
-        index_resolver = resolve(reverse("%s:index" % current_resolver.namespaces[0]))
-
-        if hasattr(index_resolver.func, "admin_site"):
-            return index_resolver.func.admin_site
-
-        for func_closure in index_resolver.func.__closure__:
-            if isinstance(func_closure.cell_contents, admin.AdminSite):
-                return func_closure.cell_contents
-    except:
-        pass
-
-    return admin.site
 
 
 def get_admin_site_name(context):
@@ -260,7 +243,7 @@ def get_model_queryset(admin_site, model, request, preserved_filters=None):
     try:
         cl = ChangeList(*change_list_args)
         queryset = cl.get_queryset(request)
-    except admin.options.IncorrectLookupParameters:
+    except (admin.options.IncorrectLookupParameters, TypeError):  # TODO need revew
         pass
 
     return queryset
@@ -507,7 +490,6 @@ class ActionDateFilterAdminMixin:
 
             return {}
 
-        # actions = self._filter_actions_by_permissions(request, self._get_base_actions())
         actions = self._get_base_actions()
         return {name: (func, name, desc) for func, name, desc in actions}
 
@@ -693,7 +675,6 @@ class ActionDateFilterAdminMixin:
             ]
         )
         self.media = response.context_data["media"]
-        # response.context_data["media"] = forms.Media(js=['admin/js/%s' % url for url in js])
 
         # Build the action form and populate it with available actions.
         if actions:

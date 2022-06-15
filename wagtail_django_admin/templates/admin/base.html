@@ -1,5 +1,5 @@
 {% extends "wagtailadmin/base.html" %}
-{% load i18n static jet_tags %}
+{% load i18n static jet_tags wagtail_admin_tags %}
 {% load cache %}
 {% load wagtailadmin_tags wagtailcore_tags i18n %}
 
@@ -7,58 +7,70 @@
 {% get_current_language as LANGUAGE_CODE %}
 
 {% block extra_css %}
-<meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
-<link rel="stylesheet" type="text/css" href="{% block stylesheet %}{% static "admin/css/base.css" %}{% endblock %}" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+    <link rel="stylesheet" type="text/css" href="{% block stylesheet %}{% static "admin/css/base.css" %}{% endblock %}" />
 
-<link rel="stylesheet" type="text/css" href="{% static "jet/css/vendor.css" as url %}{{ url|jet_append_version }}" />
-<link rel="stylesheet" type="text/css" href="{% static "jet/css/icons/style.css" as url %}{{ url|jet_append_version }}" />
-<link rel="stylesheet" type="text/css" href="{% static "jet/css/themes/default/base.css" as url %}{{ url|jet_append_version }}" class="base-stylesheet" />
-<link rel="stylesheet" type="text/css" href="{% static "jet/css/themes/default/select2.theme.css" as url %}{{ url|jet_append_version }}" class="select2-stylesheet" />
-<link rel="stylesheet" type="text/css" href="{% static "jet/css/themes/default/jquery-ui.theme.css" as url %}{{ url|jet_append_version }}" class="jquery-ui-stylesheet" />
+    <link rel="stylesheet" type="text/css" href="{% static "jet/css/vendor.css" as url %}{{ url|jet_append_version }}" />
+    <link rel="stylesheet" type="text/css" href="{% static "jet/css/icons/style.css" as url %}{{ url|jet_append_version }}" />
+    <link rel="stylesheet" type="text/css" href="{% static "jet/css/themes/default/base.css" as url %}{{ url|jet_append_version }}" class="base-stylesheet" />
+    <link rel="stylesheet" type="text/css" href="{% static "jet/css/themes/default/select2.theme.css" as url %}{{ url|jet_append_version }}" class="select2-stylesheet" />
+    <link rel="stylesheet" type="text/css" href="{% static "jet/css/themes/default/jquery-ui.theme.css" as url %}{{ url|jet_append_version }}" class="jquery-ui-stylesheet" />
 
-{% block extrastyle %}{% endblock %}
-<link rel="stylesheet" type="text/css" href="{% static "wagtail_django_admin/css/wagtail_django_admin.css" %}"
-{% if LANGUAGE_BIDI %}<link rel="stylesheet" type="text/css" href="{% block stylesheet_rtl %}{% static "admin/css/rtl.css" %}{% endblock %}" />{% endif %}
-{% if LANGUAGE_BIDI %}<link rel="stylesheet" type="text/css" href="{% static "wagtail_django_admin/css/rtl.css" %}"{% endif %}
+    {% block extrastyle %}{% endblock %}
+    <link rel="stylesheet" type="text/css" href="{% static "wagtail_django_admin/css/wagtail_django_admin.css" %}"
+    {% if LANGUAGE_BIDI %}<link rel="stylesheet" type="text/css" href="{% block stylesheet_rtl %}{% static "admin/css/rtl.css" %}{% endblock %}" />{% endif %}
+    {% if LANGUAGE_BIDI %}<link rel="stylesheet" type="text/css" href="{% static "wagtail_django_admin/css/rtl.css" %}"{% endif %}
 
 {% endblock extra_css %}
 
 {% block js %}
     {{ block.super }}
-<script type="text/javascript" src="{% url 'wagtail_django_admin:jsi18n' %}"></script>
-<script src="{% static 'admin/js/jquery.min.js' %}"></script>
-<script src="{% static "admin/js/jquery.init.js" as url %}{{ url|jet_append_version }}"></script>
-<script src="{% static "jet/js/bundle.min.js" as url %}{{ url|jet_append_version }}"></script>
+    <script type="text/javascript" src="{% url 'wagtail_django_admin:jsi18n' %}"></script>
+    <script src="{% static 'admin/js/jquery.min.js' %}"></script>
+    <script src="{% static "admin/js/jquery.init.js" as url %}{{ url|jet_append_version }}"></script>
+    <script src="{% static "jet/js/bundle.min.js" as url %}{{ url|jet_append_version }}"></script>
 
-{% block extrahead %}{% endblock %}
-{% block blockbots %}<meta name="robots" content="NONE,NOARCHIVE" />{% endblock %}
-{% block javascripts %} {% endblock %} 
+    {% block extrahead %}{% endblock %}
+    {% block blockbots %}<meta name="robots" content="NONE,NOARCHIVE" />{% endblock %}
+    {% block javascripts %} {% endblock %} 
 {% endblock js %}
 
 {% block furniture %}
     {% if not is_popup %}
-    <aside class="nav-wrapper" data-nav-primary>
-        <div class="inner">
-            <a href="{% url 'wagtailadmin_home' %}" class="logo" aria-label="{% trans 'Dashboard' %}">
-                {% block branding_logo %}
-                    {# Mobile-only logo: #}
-                    <div class="wagtail-logo-container__mobile u-hidden@sm">
-                        <img class="wagtail-logo wagtail-logo__full" src="{% versioned_static 'wagtailadmin/images/wagtail-logo.svg' %}" alt="" width="80" />
-                    </div>
-
-                    {# Desktop logo (animated): #}
-                    {% include "wagtailadmin/shared/animated_logo.html" %}
-                {% endblock %}
-                <span class="u-hidden@sm">{% trans "Dashboard" %}</span>
-            </a>
-            {% menu_search %}
-            {% comment %} {% cache 1000 main_nav request.user.username|add:LANGUAGE_CODE %} {% endcomment %}
-            {% main_nav %}
-            {% comment %} {% endcache %} {% endcomment %}
-        </div>
-        <div class="explorer__wrapper" data-explorer-menu></div>
-    </aside>
+    {% slim_sidebar_enabled as slim_sidebar_enabled %}
+        <template data-wagtail-sidebar-branding-logo>{% block branding_logo %}{% endblock %}</template>
+        {% if slim_sidebar_enabled %}
+            {% sidebar_props %}
+            <aside id="wagtail-sidebar" data-wagtail-sidebar></aside>
+        {% else %}
+            <aside id="wagtail-sidebar" class="nav-wrapper" data-nav-primary>
+                <div class="inner">
+                    <a href="{% url 'wagtailadmin_home' %}" class="logo" aria-label="{% trans 'Dashboard' %}">
+                        {# Mobile-only logo: #}
+                        <div class="wagtail-logo-container__mobile u-hidden@sm">
+                            <img class="wagtail-logo wagtail-logo__full" src="{% versioned_static 'wagtailadmin/images/wagtail-logo.svg' %}" alt="" width="80" />
+                        </div>
+                        {# Desktop logo (animated): #}
+                        {% include "wagtailadmin/shared/animated_logo.html" %}
+                        <span class="u-hidden@sm">{% trans "Dashboard" %}</span>
+                    </a>
+                    {% menu_search %}
+                    {% main_nav %}
+                </div>
+                <div class="explorer__wrapper" data-explorer-menu></div>
+            </aside>
+            {# Backwards-compatibility for branding_logo customisations in legacy sidebar. #}
+            {# RemovedInWagtail218Warning Remove when removing the legacy sidebar. #}
+            <script>
+                const branding_logo = document.querySelector('[data-wagtail-sidebar-branding-logo]');
+                const legacySidebar = document.querySelector('[data-nav-primary]');
+                if (branding_logo && branding_logo.innerHTML && legacySidebar) {
+                    const link = legacySidebar.querySelector('a');
+                    link.innerHTML = `${branding_logo.innerHTML}<span class="u-hidden@sm">{% trans "Dashboard" %}</span>`;
+                }
+            </script>
+        {% endif %}
     {% else %}
     <style>
         .wrapper {
@@ -68,7 +80,6 @@
     {% endif %}
 <!-- Container -->
 <div id="container">
-    
     {% if not is_popup %}
         <div id="header">
             <div id="branding">
@@ -94,9 +105,7 @@
             </a>
             <span class="icon-refresh loading-indicator"></span>
         </div>
-    
     {% endif %}
-
     {% block messages %}
         {% if messages %}
         <ul class="messagelist">{% for message in messages %}
@@ -104,7 +113,6 @@
         {% endfor %}</ul>
         {% endif %}
     {% endblock messages %}
-
     <!-- Content -->
     <div id="content" class="{% block coltype %}colM{% endblock %}">
         {% block pretitle %}{% endblock %}
@@ -162,5 +170,4 @@ var cookieName = "django_language";
 Cookie.set(cookieName, "{{ LANGUAGE_CODE }}", { expires: 10 });
 </script>
 {% endblock furniture %}
-{% block custom_page_js %}
-{% endblock %}
+{% block custom_page_js %}{% endblock %}
