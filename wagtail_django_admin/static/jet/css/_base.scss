@@ -25,7 +25,7 @@ body {
   text-size-adjust: 100%;
 
   @include for-mobile {
-    padding-top: $sidebar-header-height;
+    // padding-top: $sidebar-header-height;
   }
 
   &.non-scrollable {
@@ -57,6 +57,7 @@ body {
   @include for-mobile {
     &, body.menu-pinned & {
       padding-left: 0;
+      padding-top: $sidebar-header-height;
     }
   }
 

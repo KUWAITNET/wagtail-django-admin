@@ -4,7 +4,7 @@
 
 .button, input[type="submit"], input[type="button"], .object-tools a {
   &, &:visited, &:hover {
-    display: inline-block;
+    // display: inline-block;
     background-color: $button-background-color;
     color: $button-text-color;
     border: 0;
@@ -15,7 +15,7 @@
     font-size: 12px;
     font-weight: normal;
     text-align: center;
-    padding: 0 10px;
+    padding: 10px 10px;
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;

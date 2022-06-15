@@ -28,9 +28,10 @@ $phone-max-width: 480px;
  * Sidebar
  */
 
-$sidebar-width: 250px !default;
+$sidebar-width: 200px !default;
 $sidebar-header-height: 44px !default;
 
+$sidebar-link-color: #ccc !default;
 $sidebar-background-color: #354052 !default;
 $sidebar-contrast-background-color: #2b3647 !default;
 $sidebar-contrast-text-color: #6f7e95 !default;
@@ -73,7 +74,7 @@ $top-separator-color: #c0d4e8 !default;
 $top-link-color: #c0d4e8 !default;
 $top-hover-link-color: #639af5 !default;
 $top-border-color: #c0d4e8 !default;
-$top-icon-color: #47bac1 !default;
+$top-icon-color: #ccc !default;
 
 $top-dropdown-background-color: #6f7e95 !default;
 $top-dropdown-text-color: #ecf2f6 !default;
