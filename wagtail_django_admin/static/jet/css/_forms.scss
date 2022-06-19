@@ -135,10 +135,10 @@ textarea {
 }
 
 input[type=checkbox] {
-  display: none;
+  // display: none;
 
   &#action-toggle {
-    display: none !important;
+    display: inline-block !important;
   }
 
   + label:before {

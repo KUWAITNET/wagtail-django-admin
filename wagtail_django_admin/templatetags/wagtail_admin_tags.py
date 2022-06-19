@@ -5,6 +5,7 @@ from django.template import Library
 from django.conf import settings
 from django.utils.translation import activate
 from django.template.library import InclusionNode, parse_bits
+from django.template.loader import render_to_string
 
 
 register = Library()
@@ -37,7 +38,7 @@ class CustomInclusionAdminNode(InclusionNode):
         super().__init__(func, takes_context, args, kwargs, filename=None)
 
     def render(self, context):
-        opts = context["opts"]
+        # opts = context["opts"]
         # app_label = opts.app_label.lower()
         # object_name = opts.object_name.lower()
         # Load template for this render call. (Setting self.filename isn't
@@ -86,14 +87,19 @@ def correct_i18n(url, lang_code):
 
 @register.simple_tag()
 def slim_sidebar_enabled():
-    try:
-        from wagtail.admin.templatetags.wagtailadmin_tags import (
-            slim_sidebar_enabled as wagtail_slim_sidebar_enabled,
-        )
+    from wagtail import VERSION
 
-        return wagtail_slim_sidebar_enabled()
-    except Exception:
-        return
+    if VERSION[0] >= 3:
+        return True
+    else:
+        try:
+            from wagtail.admin.templatetags.wagtailadmin_tags import (
+                slim_sidebar_enabled as wagtail_slim_sidebar_enabled,
+            )
+
+            return wagtail_slim_sidebar_enabled()
+        except Exception:
+            return
 
 
 @register.simple_tag(takes_context=True)
@@ -106,3 +112,11 @@ def sidebar_props(context):
         return wagtail_sidebar_props(context)
     except Exception:
         return
+
+
+@register.simple_tag(takes_context=True)
+def old_wagtail_menu(context):
+    try:
+        return render_to_string("admin/old_wagtail_menu.html", context)
+    except TypeError:
+        return render_to_string("admin/old_wagtail_menu.html", context.__dict__)
