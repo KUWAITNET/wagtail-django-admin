@@ -18,9 +18,9 @@
     <link rel="stylesheet" type="text/css" href="{% static "jet/css/themes/default/jquery-ui.theme.css" as url %}{{ url|jet_append_version }}" class="jquery-ui-stylesheet" />
 
     {% block extrastyle %}{% endblock %}
-    <link rel="stylesheet" type="text/css" href="{% static "wagtail_django_admin/css/wagtail_django_admin.css" %}"
+    <link rel="stylesheet" type="text/css" href="{% static "wagtail_django_admin/css/wagtail_django_admin.css" %}" />
     {% if LANGUAGE_BIDI %}<link rel="stylesheet" type="text/css" href="{% block stylesheet_rtl %}{% static "admin/css/rtl.css" %}{% endblock %}" />{% endif %}
-    {% if LANGUAGE_BIDI %}<link rel="stylesheet" type="text/css" href="{% static "wagtail_django_admin/css/rtl.css" %}"{% endif %}
+    {% if LANGUAGE_BIDI %}<link rel="stylesheet" type="text/css" href="{% static "wagtail_django_admin/css/rtl.css" %}" />{% endif %}
 
 {% endblock extra_css %}
 
@@ -38,7 +38,7 @@
 
 {% block furniture %}
     {% if not is_popup %}
-    {% slim_sidebar_enabled as slim_sidebar_enabled %}
+        {% slim_sidebar_enabled as slim_sidebar_enabled %}
         <template data-wagtail-sidebar-branding-logo>{% block branding_logo %}{% endblock %}</template>
         {% if slim_sidebar_enabled %}
             {% sidebar_props %}
@@ -78,96 +78,92 @@
         }
     </style>
     {% endif %}
-<!-- Container -->
-<div id="container">
-    {% if not is_popup %}
-        <div id="header">
-            <div id="branding">
-                <span id="branding-menu" class="sidebar-header-menu-icon icon-menu sidebar-toggle"></span>
-                <span id="branding-pin" class="sidebar-link-icon icon-pin sidebar-pin"></span>
-                {% block branding %}{% endblock %}
+    <!-- Container -->
+    <div id="container">
+        {% if not is_popup %}
+            <div id="header">
+                <div id="branding">
+                    <span id="branding-menu" class="sidebar-header-menu-icon icon-menu sidebar-toggle"></span>
+                    <span id="branding-pin" class="sidebar-link-icon icon-pin sidebar-pin"></span>
+                    {% block branding %}{% endblock %}
+                </div>
+                {% block usertools %}
+                
+                {% endblock %}
             </div>
-            {% block usertools %}
-            
+            <!-- END Header -->
+            {% block breadcrumbs %}
+            <div class="breadcrumbs">
+                <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+                {% if title %} &rsaquo; {{ title }}{% endif %}
+            </div>
             {% endblock %}
-        </div>
-        <!-- END Header -->
-        {% block breadcrumbs %}
-        <div class="breadcrumbs">
-            <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
-            {% if title %} &rsaquo; {{ title }}{% endif %}
-        </div>
-        {% endblock %}
-        <div class="related-popup-container scrollable">
-            <a href="#" class="related-popup-back">
-                <span class="related-popup-back-icon icon-arrow-left"></span>
-                <span class="related-popup-back-label">{% trans "back" %}</span>
-            </a>
-            <span class="icon-refresh loading-indicator"></span>
-        </div>
-    {% endif %}
-    {% block messages %}
-        {% if messages %}
-        <ul class="messagelist">{% for message in messages %}
-          <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message|capfirst }}</li>
-        {% endfor %}</ul>
+            <div class="related-popup-container scrollable">
+                <a href="#" class="related-popup-back">
+                    <span class="related-popup-back-icon icon-arrow-left"></span>
+                    <span class="related-popup-back-label">{% trans "back" %}</span>
+                </a>
+                <span class="icon-refresh loading-indicator"></span>
+            </div>
         {% endif %}
-    {% endblock messages %}
-    <!-- Content -->
-    <div id="content" class="{% block coltype %}colM{% endblock %}">
-        {% block pretitle %}{% endblock %}
-        {% block content_title %}{% if title %}<h1>{{ title }}</h1>{% endif %}{% endblock %}
-        {% block content %}
-        {% block object-tools %}{% endblock %}
-        {{ content }}
-        {% endblock %}
-        {% block sidebar %}{% endblock %}
-        <br class="clear" />
-    </div>
-    <!-- END Content -->
-
-    {% block footer %}<div id="footer"></div>{% endblock %}
-
-    {% jet_delete_confirmation_context as delete_confirmation_context %}
-    {{ delete_confirmation_context }}
-
-    {% jet_change_form_sibling_links_enabled as show_siblings %}
-    {% if change and show_siblings %}
-        <div class="changeform-navigation">
-            {% spaceless %}
-                {% jet_previous_object as sibling %}
-                <a{% if sibling.url %} href="{{ sibling.url }}"{% endif %} class="changeform-navigation-button segmented-button left{% if not sibling %} disabled{% endif %}" title="{{ sibling.label }}">
-                    <span class="changeform-navigation-button-icon left icon-arrow-left"></span>
-                    <span class="changeform-navigation-button-label">
-                        {% if sibling %}
-                            {{ sibling.label }}
-                        {% else %}
-                            ---
-                        {% endif %}
-                    </span>
-                </a>
-
-                {% jet_next_object as sibling %}
-                <a{% if sibling.url %} href="{{ sibling.url }}"{% endif %} class="changeform-navigation-button segmented-button right{% if not sibling %} disabled{% endif %}" title="{{ sibling.label }}">
-                    <span class="changeform-navigation-button-icon right icon-arrow-right"></span>
-                    <span class="changeform-navigation-button-label">
-                        {% if sibling %}
-                            {{ sibling.label }}
-                        {% else %}
-                            ---
-                        {% endif %}
-                    </span>
-                </a>
-            {% endspaceless %}
+        {% block messages %}
+            {% if messages %}
+            <ul class="messagelist">{% for message in messages %}
+            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message|capfirst }}</li>
+            {% endfor %}</ul>
+            {% endif %}
+        {% endblock messages %}
+        <!-- Content -->
+        <div id="content" class="{% block coltype %}colM{% endblock %}">
+            {% block pretitle %}{% endblock %}
+            {% block content_title %}{% if title %}<h1>{{ title }}</h1>{% endif %}{% endblock %}
+            {% block content %}
+            {% block object-tools %}{% endblock %}
+            {{ content }}
+            {% endblock %}
+            {% block sidebar %}{% endblock %}
+            <br class="clear" />
         </div>
-    {% endif %}
+        <!-- END Content -->
 
-</div>
-<!-- END Container -->
-<script src="{% static 'wagtail_django_admin/js/cookie-js.js' %}"></script>
-<script>
-var cookieName = "django_language";
-Cookie.set(cookieName, "{{ LANGUAGE_CODE }}", { expires: 10 });
-</script>
+        {% block footer %}<div id="footer"></div>{% endblock %}
+        {% jet_delete_confirmation_context as delete_confirmation_context %}
+        {{ delete_confirmation_context }}
+        {% jet_change_form_sibling_links_enabled as show_siblings %}
+        {% if change and show_siblings %}
+            <div class="changeform-navigation">
+                {% spaceless %}
+                    {% jet_previous_object as sibling %}
+                    <a{% if sibling.url %} href="{{ sibling.url }}"{% endif %} class="changeform-navigation-button segmented-button left{% if not sibling %} disabled{% endif %}" title="{{ sibling.label }}">
+                        <span class="changeform-navigation-button-icon left icon-arrow-left"></span>
+                        <span class="changeform-navigation-button-label">
+                            {% if sibling %}
+                                {{ sibling.label }}
+                            {% else %}
+                                ---
+                            {% endif %}
+                        </span>
+                    </a>
+                    {% jet_next_object as sibling %}
+                    <a{% if sibling.url %} href="{{ sibling.url }}"{% endif %} class="changeform-navigation-button segmented-button right{% if not sibling %} disabled{% endif %}" title="{{ sibling.label }}">
+                        <span class="changeform-navigation-button-icon right icon-arrow-right"></span>
+                        <span class="changeform-navigation-button-label">
+                            {% if sibling %}
+                                {{ sibling.label }}
+                            {% else %}
+                                ---
+                            {% endif %}
+                        </span>
+                    </a>
+                {% endspaceless %}
+            </div>
+        {% endif %}
+    </div>
+    <!-- END Container -->
+    <script src="{% static 'wagtail_django_admin/js/cookie-js.js' %}"></script>
+    <script>
+        var cookieName = "django_language";
+        Cookie.set(cookieName, "{{ LANGUAGE_CODE }}", { expires: 10 });
+    </script>
 {% endblock furniture %}
 {% block custom_page_js %}{% endblock %}
