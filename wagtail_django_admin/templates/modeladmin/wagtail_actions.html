@@ -24,7 +24,7 @@
 
   <!-- Modal content -->
   <div class="modal-content" style="left: 250px">
-    <span class="close">&times;</span>
+    <span class="close" style="width: 20px;height: 20px;text-align: center;">&times;</span>
     <p>{% trans "Are you sure you want to apply this action on the selected lines?..." %}</p>
       <button type="submit" class="button center" title="{% trans "Run the selected action" %}" name="index" value="{{ action_index|default:0 }}">{% trans "Yes I am sure, please apply ..." %}</button>
   </div>
