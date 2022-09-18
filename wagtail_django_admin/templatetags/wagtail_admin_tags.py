@@ -6,6 +6,14 @@ from django.conf import settings
 from django.utils.translation import activate
 from django.template.library import InclusionNode, parse_bits
 from django.template.loader import render_to_string
+from django.urls import reverse
+from django.utils.translation import gettext_lazy as _
+from django.utils.html import json_script
+
+from wagtail.admin.search import admin_search_areas
+from wagtail.admin.ui import sidebar
+from wagtail.admin.menu import admin_menu
+from wagtail.telepath import JSContext
 
 
 register = Library()
@@ -109,9 +117,63 @@ def sidebar_props(context):
             sidebar_props as wagtail_sidebar_props,
         )
 
-        return wagtail_sidebar_props(context)
+        res = wagtail_sidebar_props(context)
+        return res
     except Exception:
         return
+
+
+@register.simple_tag(takes_context=True)
+def sidebar_props_respect_lang(context):
+    request = context["request"]
+    search_areas = admin_search_areas.search_items_for_request(request)
+    if search_areas:
+        search_area = search_areas[0]
+    else:
+        search_area = None
+
+    account_menu = [
+        sidebar.LinkMenuItem(
+            "account", _("Account"), reverse("wagtailadmin_account"), icon_name="user"
+        ),
+        sidebar.LinkMenuItem(
+            "logout", _("Log out"), reverse("wagtailadmin_logout"), icon_name="logout"
+        ),
+    ]
+
+    modules = [
+        sidebar.WagtailBrandingModule(),
+        sidebar.SearchModule(search_area) if search_area else None,
+        sidebar.MainMenuModule(
+            admin_menu.render_component(request), account_menu, request.user
+        ),
+    ]
+
+    def correct_menu_items(module):
+        if hasattr(module, "menu_items") and isinstance(module.menu_items, list):
+            for menu_item in module.menu_items:
+                if hasattr(menu_item, "menu_items") and isinstance(
+                    menu_item.menu_items, list
+                ):
+                    correct_menu_items(menu_item)
+                elif hasattr(menu_item, "url") and menu_item.url:
+                    menu_item.url = correct_i18n(menu_item.url, current_lang)
+        elif hasattr(module, "url") and module.url:
+            module.url = correct_i18n(module.url, current_lang)
+
+    current_lang = request.LANGUAGE_CODE
+    renderd_modules = []
+    for module in modules:
+        if module is not None:
+            renderd_modules.append(module)
+            correct_menu_items(module)
+
+    return json_script(
+        {
+            "modules": JSContext().pack(modules),
+        },
+        element_id="wagtail-sidebar-props",
+    )
 
 
 @register.simple_tag(takes_context=True)
