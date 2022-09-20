@@ -10,11 +10,6 @@ from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from django.utils.html import json_script
 
-from wagtail.admin.search import admin_search_areas
-from wagtail.admin.ui import sidebar
-from wagtail.admin.menu import admin_menu
-from wagtail.telepath import JSContext
-
 
 register = Library()
 
@@ -125,6 +120,11 @@ def sidebar_props(context):
 
 @register.simple_tag(takes_context=True)
 def sidebar_props_respect_lang(context):
+    from wagtail.admin.ui import sidebar  # noqa
+    from wagtail.admin.search import admin_search_areas  # noqa
+    from wagtail.admin.menu import admin_menu  # noqa
+    from wagtail.telepath import JSContext  # noqa
+
     request = context["request"]
     search_areas = admin_search_areas.search_items_for_request(request)
     if search_areas:
