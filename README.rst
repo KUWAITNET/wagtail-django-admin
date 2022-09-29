@@ -40,7 +40,7 @@ More advanced option if you want to control the order and icon_name
 .. code:: python
 
    WAGTAIL_ADMIN_CUSTOM_MENU = {
-      "<app_name>": [
+      "<app_name>": {
          ...
          {
             "order": 200,
@@ -52,7 +52,7 @@ More advanced option if you want to control the order and icon_name
             },
          }
          ...
-      ]
+      }
    }
 
 3. In project ``urls.py`` add the following line:
