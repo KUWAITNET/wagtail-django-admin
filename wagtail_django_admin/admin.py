@@ -134,7 +134,7 @@ for app in app_list:
                         model_name
                         in django_settings.WAGTAIL_ADMIN_CUSTOM_MENU[app_name]["models"]
                         or object_name
-                        in django_settings.WAGTAIL_ADMIN_CUSTOM_MENU[app_name]
+                        in django_settings.WAGTAIL_ADMIN_CUSTOM_MENU[app_name]["models"]
                         or not django_settings.WAGTAIL_ADMIN_CUSTOM_MENU[app_name][
                             "models"
                         ]
