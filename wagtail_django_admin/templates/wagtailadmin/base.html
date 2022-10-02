@@ -1,6 +1,20 @@
 {% extends "wagtailadmin/admin_base.html" %}
 {% load wagtailadmin_tags wagtailcore_tags i18n wagtail_admin_tags %}
 
+{% block css %}
+    {% get_current_language_bidi as LANGUAGE_BIDI %}
+    <link rel="stylesheet" href="{% versioned_static 'wagtailadmin/css/vendor/jquery-ui/jquery-ui-1.10.3.verdant.css' %}" />
+    <link rel="stylesheet" href="{% versioned_static 'wagtailadmin/css/vendor/jquery.tagit.css' %}">
+    <link rel="stylesheet" href="{% versioned_static 'wagtailadmin/css/core.css' %}" type="text/css" />
+
+    {% hook_output 'insert_global_admin_css' %}
+    {% if LANGUAGE_BIDI %}
+    <link rel="stylesheet" href="{% static 'css/wagtail_admin_rtl.css' %}" type="text/css" />
+    {% endif %}
+
+    {% block extra_css %}{% endblock %}
+{% endblock %}
+
 {% block furniture %}
     <template data-wagtail-sidebar-branding-logo>{% block branding_logo %}{% endblock %}</template>
     {% sidebar_props_respect_lang %}

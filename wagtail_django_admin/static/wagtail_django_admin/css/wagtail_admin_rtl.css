@@ -116,3 +116,17 @@ header * {
         left: 5%;
     }
 }
+
+.object>.title-wrapper {
+    padding: 0.9em 5em 0.9em 5em;
+}
+
+.dropdown .dropdown-toggle {
+    left: 0;
+    right: auto;
+}
+
+.dropdown .button, .dropdown button, .dropdown input[type=button], .dropdown input[type=reset], .dropdown input[type=submit]{
+    float: right;
+    padding: 0 1em 0 5em;
+}
