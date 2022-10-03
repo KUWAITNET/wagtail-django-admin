@@ -1,13 +1,10 @@
-from django.utils.translation import gettext_lazy as _
+from django.utils.translation import gettext_lazy as _, activate
 from django.conf import settings as django_settings
-
 from django.contrib.auth import get_user_model
 
 from wagtail.core import hooks
 from wagtail.admin.menu import MenuItem, SubmenuMenuItem, Menu
 from wagtail_django_admin.utils import get_app_list
-from wagtail.core import hooks
-from wagtail.admin.menu import MenuItem, SubmenuMenuItem, Menu
 
 from .utils import url_no_i18n
 
@@ -64,6 +61,13 @@ for app in app_list:
     WAGTAIL_ADMIN_CUSTOM_MENU = getattr(
         django_settings, "WAGTAIL_ADMIN_CUSTOM_MENU", {}
     )
+    WAGTAIL_ADMIN_DEFAULT_MENU_LANG = (
+        django_settings.WAGTAIL_ADMIN_DEFAULT_MENU_LANG
+        if hasattr(django_settings, "WAGTAIL_ADMIN_DEFAULT_MENU_LANG")
+        else None
+    )
+    if WAGTAIL_ADMIN_DEFAULT_MENU_LANG:
+        activate(WAGTAIL_ADMIN_DEFAULT_MENU_LANG)
     all_apps = WAGTAIL_ADMIN_CUSTOM_MENU.keys()
     if (
         hasattr(django_settings, "WAGTAIL_ADMIN_CUSTOM_MENU")
@@ -174,6 +178,9 @@ for app in app_list:
                             icon_name = "folder-inverse"
 
                     item = CustomMenuItem(
-                        _(model_menu_name), admin_url, icon_name=icon_name, order=order,
+                        _(model_menu_name),
+                        admin_url,
+                        icon_name=icon_name,
+                        order=order,
                     )
                     return item

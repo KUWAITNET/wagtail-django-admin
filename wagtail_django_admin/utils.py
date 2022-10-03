@@ -663,7 +663,6 @@ class ActionDateFilterAdminMixin:
 
         # needs to be reviewed
         if isinstance(response, HttpResponseNotAllowed):
-            # print("HttpResponseNotAllowed")
             response.context_data = {}
 
         extra = "" if settings.DEBUG else ".min"

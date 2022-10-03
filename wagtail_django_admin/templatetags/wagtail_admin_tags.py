@@ -158,11 +158,14 @@ def sidebar_props_respect_lang(context):
                     correct_menu_items(menu_item)
                 elif hasattr(menu_item, "url") and menu_item.url:
                     menu_item.url = correct_i18n(menu_item.url, current_lang)
+                    label = _(menu_item.label)
+                    menu_item.label = str(label)
         elif hasattr(module, "url") and module.url:
             module.url = correct_i18n(module.url, current_lang)
 
     current_lang = request.LANGUAGE_CODE
     renderd_modules = []
+    activate(current_lang)
     for module in modules:
         if module is not None:
             renderd_modules.append(module)
