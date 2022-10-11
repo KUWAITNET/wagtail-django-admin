@@ -130,3 +130,6 @@ header * {
     float: right;
     padding: 0 1em 0 5em;
 }
+.sidebar {
+    transform: inherit !important;
+}
