@@ -173,7 +173,7 @@ def sidebar_props_respect_lang(context):
 
     return json_script(
         {
-            "modules": JSContext().pack(modules),
+            "modules": JSContext().pack(renderd_modules),
         },
         element_id="wagtail-sidebar-props",
     )
