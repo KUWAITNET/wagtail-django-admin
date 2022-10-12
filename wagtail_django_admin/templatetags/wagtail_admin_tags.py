@@ -77,13 +77,20 @@ def admin_actions_tag(parser, token):
 def correct_i18n(url, lang_code):
     LANGUAGES = [lang[0] for lang in settings.LANGUAGES]
     activate(lang_code)
+    if settings.FORCE_SCRIPT_NAME:
+        url = url[len(settings.FORCE_SCRIPT_NAME) :]
+
     if settings.USE_I18N:
         m = re.match(r"(/[^/]*)(/.*$)", url)
         url_lang = m.groups()[0][1:]
         if url_lang in LANGUAGES:
-            return f"/{lang_code}{m.groups()[1]}"
+            new_url = f"/{lang_code}{m.groups()[1]}"
         else:
-            return url
+            new_url = url
+
+        if settings.FORCE_SCRIPT_NAME:
+            new_url = f"{settings.FORCE_SCRIPT_NAME}{new_url}"
+        return new_url
     else:
         return url
 
@@ -168,8 +175,8 @@ def sidebar_props_respect_lang(context):
     activate(current_lang)
     for module in modules:
         if module is not None:
-            renderd_modules.append(module)
             correct_menu_items(module)
+            renderd_modules.append(module)
 
     return json_script(
         {
