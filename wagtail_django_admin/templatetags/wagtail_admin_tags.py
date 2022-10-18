@@ -131,7 +131,8 @@ def sidebar_props_respect_lang(context):
     from wagtail.admin.search import admin_search_areas  # noqa
     from wagtail.admin.menu import admin_menu  # noqa
     from wagtail.telepath import JSContext  # noqa
-
+    from wagtail import hooks
+    
     request = context["request"]
     search_areas = admin_search_areas.search_items_for_request(request)
     if search_areas:
@@ -147,6 +148,17 @@ def sidebar_props_respect_lang(context):
             "logout", _("Log out"), reverse("wagtailadmin_logout"), icon_name="logout"
         ),
     ]
+
+    current_lang = request.LANGUAGE_CODE
+
+    def _registered_menu_items(self):
+        activate(current_lang)
+        self._registered_menu_items = [
+            fn() for fn in hooks.get_hooks(self.register_hook_name)
+        ]
+        return self._registered_menu_items
+        
+    admin_menu.registered_menu_items_set = _registered_menu_items(admin_menu)
 
     modules = [
         sidebar.WagtailBrandingModule(),
@@ -169,8 +181,9 @@ def sidebar_props_respect_lang(context):
                     menu_item.label = str(label)
         elif hasattr(module, "url") and module.url:
             module.url = correct_i18n(module.url, current_lang)
+            label = _(menu_item.label)
+            menu_item.label = str(label)
 
-    current_lang = request.LANGUAGE_CODE
     renderd_modules = []
     activate(current_lang)
     for module in modules:

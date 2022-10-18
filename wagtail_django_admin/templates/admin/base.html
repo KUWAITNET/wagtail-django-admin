@@ -40,7 +40,7 @@
         {% slim_sidebar_enabled as slim_sidebar_enabled %}
         <template data-wagtail-sidebar-branding-logo>{% block branding_logo %}{% endblock %}</template>
         {% if slim_sidebar_enabled %}
-            {% sidebar_props %}
+            {% sidebar_props_respect_lang %}
             <aside id="wagtail-sidebar" data-wagtail-sidebar></aside>
         {% else %}
             {% old_wagtail_menu %}
