@@ -176,11 +176,17 @@ def sidebar_props_respect_lang(context):
                 ):
                     correct_menu_items(menu_item)
                 elif hasattr(menu_item, "url") and menu_item.url:
-                    menu_item.url = correct_i18n(menu_item.url, current_lang)
+                    url = menu_item.url
+                    if isinstance(menu_item.url, list):
+                        url = "/".join(menu_item.url)
+                    menu_item.url = correct_i18n(url, current_lang)
                     label = _(menu_item.label)
                     menu_item.label = str(label)
         elif hasattr(module, "url") and module.url:
-            module.url = correct_i18n(module.url, current_lang)
+            url = module.url
+            if isinstance(module.url, list):
+                url = "/".join(module.url)
+            module.url = correct_i18n(url, current_lang)
             label = _(menu_item.label)
             menu_item.label = str(label)
 
