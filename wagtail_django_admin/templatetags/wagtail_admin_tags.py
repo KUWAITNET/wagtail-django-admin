@@ -113,6 +113,12 @@ def slim_sidebar_enabled():
 
 
 @register.simple_tag(takes_context=True)
+def show_select_all(context):
+    if context.template_name == "modeladmin/admin/index_date_filter.html":
+        return True
+
+
+@register.simple_tag(takes_context=True)
 def sidebar_props(context):
     try:
         from wagtail.admin.templatetags.wagtailadmin_tags import (
@@ -132,7 +138,7 @@ def sidebar_props_respect_lang(context):
     from wagtail.admin.menu import admin_menu  # noqa
     from wagtail.telepath import JSContext  # noqa
     from wagtail import hooks
-    
+
     request = context["request"]
     search_areas = admin_search_areas.search_items_for_request(request)
     if search_areas:
@@ -157,7 +163,7 @@ def sidebar_props_respect_lang(context):
             fn() for fn in hooks.get_hooks(self.register_hook_name)
         ]
         return self._registered_menu_items
-        
+
     admin_menu.registered_menu_items_set = _registered_menu_items(admin_menu)
 
     modules = [

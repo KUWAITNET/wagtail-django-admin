@@ -1,8 +1,11 @@
-{% load modeladmin_tags %}
+{% load modeladmin_tags wagtail_admin_tags %}
+{% show_select_all as show_select_all %}
 <tr{{ row_attrs }}>
+    {% if show_select_all %}
     <td class="">
         <input type="checkbox" class="action-select" name="_selected_action" value="{{obj.id}}">
     </td>
+    {% endif %}
     {% for item in result %}
         {% result_row_value_display forloop.counter0 %}
     {% endfor %}
