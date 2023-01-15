@@ -2,7 +2,6 @@
 {% load i18n static jet_tags modeladmin_tags wagtailadmin_tags %}
 {% block css %}
     {{ block.super }}
-    <link rel="stylesheet" type="text/css" href="{% static "wagtail_django_admin/css/wagtail_custom.css" %}"
 {% endblock %}
 
 {% block content %}
@@ -10,10 +9,10 @@
     {{ block.super }}
     {% endblock %}
     {% block content_main %}
+    {% comment %} Customized for just add a horizontal scroll to top of the result-list {% endcomment %}
         <div>
             <div class="row">
                 {% block content_cols %}
-
                     {% block filters %}
                     {{ block.super }}
                     {% endblock %}
@@ -45,7 +44,6 @@
                         {% endblock %}
                     </div>
                     <script>
-                        
                         var scroller_wrapper1 = document.getElementById('top-horizontal-scroller-wrapper');
                         var scroller = document.getElementById('top-horizontal-scroller');
                         var table_scroller = document.getElementById('result-list-id');
@@ -59,15 +57,11 @@
                             scroller_wrapper1.scrollLeft = table_scroller.scrollLeft;
                         };
                     </script>
-
                     {% block pagination %}
                     {{ block.super }}
                     {% endblock %}
-
                 {% endblock %}
             </div>
         </div>
-        
     {% endblock %}
-
 {% endblock %}

@@ -2,16 +2,10 @@
 {% load static i18n wagtailadmin_tags wagtailcore_tags wagtail_admin_tags %}
 
 {% block css %}
-    {% get_current_language_bidi as LANGUAGE_BIDI %}
     <link rel="stylesheet" href="{% versioned_static 'wagtailadmin/css/vendor/jquery-ui/jquery-ui-1.10.3.verdant.css' %}" />
     <link rel="stylesheet" href="{% versioned_static 'wagtailadmin/css/vendor/jquery.tagit.css' %}">
     <link rel="stylesheet" href="{% versioned_static 'wagtailadmin/css/core.css' %}" type="text/css" />
-
     {% hook_output 'insert_global_admin_css' %}
-    {% if LANGUAGE_BIDI %}
-    <link rel="stylesheet" href="{% static 'wagtail_django_admin/css/wagtail_admin_rtl.css' %}" type="text/css" />
-    {% endif %}
-
     {% block extra_css %}{% endblock %}
 {% endblock %}
 
