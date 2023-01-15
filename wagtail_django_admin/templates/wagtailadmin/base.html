@@ -9,7 +9,7 @@
 
     {% hook_output 'insert_global_admin_css' %}
     {% if LANGUAGE_BIDI %}
-    <link rel="stylesheet" href="{% static 'css/wagtail_admin_rtl.css' %}" type="text/css" />
+    <link rel="stylesheet" href="{% static 'wagtail_django_admin/css/wagtail_admin_rtl.css' %}" type="text/css" />
     {% endif %}
 
     {% block extra_css %}{% endblock %}
