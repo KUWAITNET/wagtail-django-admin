@@ -1,24 +1,3 @@
-.aligned label {
-    float: right;
-    text-align: initial;
-}
-
-.nav-submenu .menu-item a .icon--menuitem {
-    margin-left: 0;
-}
-
-.related-widget-wrapper, input, textarea, .select2-results__options {
-    float: right;
-}
-
-.related-widget-wrapper-user-permissions {
-    float: none;
-}
-
-input {
-    margin: 0 20px !important;
-}
-
-label {
-    float: right !important;
+.sidebar {
+    transform: inherit;
 }
