@@ -1,3 +1,7 @@
 .sidebar {
     transform: inherit;
 }
+.aligned label {
+    padding: 0 0 3px 1em;
+    float: right;
+}

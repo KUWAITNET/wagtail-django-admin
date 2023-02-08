@@ -1,12 +1,9 @@
+/* Custom style for django admin pages */
 .nav-main a {
     color: #ccc;
 }
 #footer {
     padding: 0;
-}
-html {
-    height: 100%;
-    font-size: 100%;
 }
 
 .wrapper, body.change-form, body.dashboard {
@@ -47,24 +44,8 @@ table thead th {
     background: rgb(0, 125, 126);
 }
 
-/* #toolbar form input[type="submit"], #toolbar form input[type="submit"]:visited, #toolbar form input[type="submit"]:hover {
-    background-color: rgb(0, 103, 106);
-} */
-
-/* .button, .button:visited, .button:hover, input[type="submit"], input[type="submit"]:visited, input[type="submit"]:hover, input[type="button"], input[type="button"]:visited, input[type="button"]:hover, .object-tools a, .object-tools a:visited, .object-tools a:hover {
-    background-color: rgb(77, 77, 77);
-    color: white;
-
-} */
-
-label {
-    display: initial;
-    width: auto;
-    padding: inherit;
-}
-
 .halloeditor, .tagit, input:not([type=submit]), select, textarea {
-    width: auto;
+    width: auto !important;
 }
 
 .changeform-tabs {
@@ -100,7 +81,7 @@ body {
     width: auto;
 }
 .label, label {
-    width: auto;
+    width: auto !important;
 }
 .changelist-footer.fixed, table.helper {
     left: 220px;
@@ -150,34 +131,41 @@ tr.form-row.empty-form {
     overflow: auto; /* Enable scroll if needed */
     background-color: rgb(0,0,0); /* Fallback color */
     background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
-    }
+}
     
-    /* Modal Content/Box */
-    .modal-content {
+/* Modal Content/Box */
+.modal-content {
     background-color: #fefefe;
     margin: 15% auto; /* 15% from the top and centered */
     padding: 20px;
     border: 1px solid #888;
     width: 30%; /* Could be more or less, depending on screen size */
-    }
+}
     
-    /* The Close Button */
-    .close {
+/* The Close Button */
+.close {
     color: #aaa;
     float: right;
     font-size: 28px;
     font-weight: bold;
-    }
+}
     
-    .close:hover,
-    .close:focus {
+.close:hover,
+.close:focus {
     color: black;
     text-decoration: none;
     cursor: pointer;
-    }
-    #confirmAction {
+}
+
+#confirmAction {
     display: inline-grid;
     cursor: pointer;
     align-content: center;
-    }
-      
+}
+
+.aligned label {
+    padding: 0.57143rem 0.71429rem 0 0.71429rem !important;
+}
+#searchbar {
+    height: 28px;
+}
