@@ -1,15 +1,59 @@
-from django.utils.translation import gettext_lazy as _, activate
 from django.conf import settings as django_settings
 from django.contrib.auth import get_user_model
-
+from django.urls import path
+from django.utils.translation import activate, get_language
+from django.utils.translation import gettext_lazy as _
+from django.template import engines
+from django.utils import translation
+from django.shortcuts import redirect
+from wagtail.admin.menu import Menu, MenuItem, SubmenuMenuItem
 from wagtail.core import hooks
-from wagtail.admin.menu import MenuItem, SubmenuMenuItem, Menu
+from wagtail.users.models import UserProfile
+
 from wagtail_django_admin.utils import get_app_list
 
 from .utils import url_no_i18n
-
+from .settings import WAGTAIL_ADMIN_LANGUAGES
 
 User = get_user_model()
+
+
+def lang_switcher_view(request):
+    url = request.META["HTTP_REFERER"]
+    # Change the user wagtail profile language
+    curr_lang = get_language()
+    lang = list(filter(lambda lang: lang[0] != curr_lang, WAGTAIL_ADMIN_LANGUAGES))[0][
+        0
+    ]
+
+    user_profile = UserProfile.objects.get(user=request.user)
+    user_profile.preferred_language = lang
+    user_profile.save()
+    request.session[translation.LANGUAGE_SESSION_KEY] = lang
+    translation.activate(lang)
+
+    url = url.split(request.get_host())[-1]
+    url = url_no_i18n(url)
+    return redirect(f"/{lang}{url}")
+
+
+@hooks.register("register_admin_urls")
+def lang_switcher_url():
+    return [
+        path("switch-lang/", lang_switcher_view, name="switch_lang"),
+    ]
+
+
+@hooks.register("insert_global_admin_js", order=100)
+def global_admin_js():
+    django_engine = engines["django"]
+    template = django_engine.get_template("wagtail_django_admin/lang_switcher.js")
+    curr_lang = get_language()
+    lang = list(filter(lambda lang: lang[0] != curr_lang, WAGTAIL_ADMIN_LANGUAGES))[0][
+        1
+    ]
+    rendered_template = template.render(context={"other_lang": lang})
+    return f"<script>{rendered_template}</script>"
 
 
 class CustomSubmenuMenuItem(SubmenuMenuItem):
@@ -134,12 +178,17 @@ for app in app_list:
                         or isinstance(
                             django_settings.WAGTAIL_ADMIN_CUSTOM_MENU[app_name], dict
                         )
-                        and "models" in django_settings.WAGTAIL_ADMIN_CUSTOM_MENU[app_name]
+                        and "models"
+                        in django_settings.WAGTAIL_ADMIN_CUSTOM_MENU[app_name]
                         and (
                             model_name
-                            in django_settings.WAGTAIL_ADMIN_CUSTOM_MENU[app_name]["models"]
+                            in django_settings.WAGTAIL_ADMIN_CUSTOM_MENU[app_name][
+                                "models"
+                            ]
                             or object_name
-                            in django_settings.WAGTAIL_ADMIN_CUSTOM_MENU[app_name]["models"]
+                            in django_settings.WAGTAIL_ADMIN_CUSTOM_MENU[app_name][
+                                "models"
+                            ]
                             or not django_settings.WAGTAIL_ADMIN_CUSTOM_MENU[app_name][
                                 "models"
                             ]
@@ -147,7 +196,9 @@ for app in app_list:
                     )
                 ):
 
-                    @hooks.register("register_wagtail_django_admin_menu_item" + app_name)
+                    @hooks.register(
+                        "register_wagtail_django_admin_menu_item" + app_name
+                    )
                     def register_users_menu_item(
                         model_name=model_name,
                         model_menu_name=model_menu_name,
@@ -172,9 +223,9 @@ for app in app_list:
                             ]["icon_name"]
                         except (KeyError, TypeError):
                             try:
-                                icon_name = WAGTAIL_ADMIN_CUSTOM_MENU[app_name]["models"][
-                                    object_name
-                                ]["icon_name"]
+                                icon_name = WAGTAIL_ADMIN_CUSTOM_MENU[app_name][
+                                    "models"
+                                ][object_name]["icon_name"]
                             except (KeyError, TypeError):
                                 icon_name = "folder-inverse"
 
