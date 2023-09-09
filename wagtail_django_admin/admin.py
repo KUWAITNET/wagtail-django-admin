@@ -48,8 +48,8 @@ def lang_switcher_url():
 def global_admin_js():
     django_engine = engines["django"]
     template = django_engine.get_template("wagtail_django_admin/lang_switcher.js")
+    curr_lang = get_language()
     if len(WAGTAIL_ADMIN_LANGUAGES) > 1:
-        curr_lang = get_language()
         lang = list(filter(lambda lang: lang[0] != curr_lang, WAGTAIL_ADMIN_LANGUAGES))[
             0
         ][1]
