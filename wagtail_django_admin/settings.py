@@ -52,3 +52,7 @@ TRANSLATION_FUNC = import_string(
 APPS_CUSTOMIZATION_FUNC = import_string(
     TABULAR_PERMISSIONS_CONFIG["apps_customization_func"]
 )
+
+WAGTAIL_ADMIN_LANGUAGES = getattr(
+    settings, "WAGTAIL_ADMIN_LANGUAGES", settings.LANGUAGES
+)
