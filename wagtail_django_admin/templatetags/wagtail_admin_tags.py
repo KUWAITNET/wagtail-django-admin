@@ -78,13 +78,12 @@ def correct_i18n(url, lang_code):
     LANGUAGES = [lang[0] for lang in settings.LANGUAGES]
     activate(lang_code)
     if settings.FORCE_SCRIPT_NAME:
-        url = url[len(settings.FORCE_SCRIPT_NAME) :]
+        url = url[len(settings.FORCE_SCRIPT_NAME):]
 
     if settings.USE_I18N:
-        m = re.match(r"(/[^/]*)(/.*$)", url)
-        url_lang = m.groups()[0][1:]
-        if url_lang in LANGUAGES:
-            new_url = f"/{lang_code}{m.groups()[1]}"
+        url_lang = url.split("/")[0] if url.split("/") else None
+        if url_lang and url_lang in LANGUAGES:
+            new_url = "/".join([url_lang] + url.split("/")[1:])
         else:
             new_url = url
 

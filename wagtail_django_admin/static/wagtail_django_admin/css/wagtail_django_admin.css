@@ -44,9 +44,17 @@ table thead th {
     background: rgb(0, 125, 126);
 }
 
-.halloeditor, .tagit, input:not([type=submit]), select, textarea {
+.halloeditor, .tagit, input:not([type=submit]):not([type=checkbox]), select, textarea {
     width: auto !important;
 }
+
+input[type=checkbox] {
+    background-color: white;
+}
+
+input[type=checkbox]:checked {
+    background-color: #000;
+  }
 
 .changeform-tabs {
     background-color: rgb(0, 103, 106);

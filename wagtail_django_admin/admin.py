@@ -2,7 +2,10 @@ from django.utils.translation import gettext_lazy as _, activate
 from django.conf import settings as django_settings
 from django.contrib.auth import get_user_model
 
-from wagtail.core import hooks
+try:
+    from wagtail.core import hooks
+except ModuleNotFoundError:
+    from wagtail import hooks
 from wagtail.admin.menu import MenuItem, SubmenuMenuItem, Menu
 from wagtail_django_admin.utils import get_app_list
 
