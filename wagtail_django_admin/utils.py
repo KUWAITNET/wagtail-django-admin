@@ -31,7 +31,10 @@ LANGUAGES = [lang[0] for lang in settings.LANGUAGES]
 
 def url_no_i18n(url, *args, **kwargs):
     if settings.USE_I18N:
-        m = re.match(r"(/[^/]*)(/.*$)", url)
+        if settings.FORCE_SCRIPT_NAME:
+            m = re.match(r"{}(/[^/]*)(/.*$)".format(settings.FORCE_SCRIPT_NAME), url)
+        else:
+            m = re.match(r"(/[^/]*)(/.*$)", url)
         url_lang = m.groups()[0][1:]
         if url_lang in LANGUAGES:
             return m.groups()[1]

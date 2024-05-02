@@ -38,6 +38,8 @@ def lang_switcher_view(request):
 
     url = url.split(request.get_host())[-1]
     url = url_no_i18n(url)
+    if django_settings.FORCE_SCRIPT_NAME:
+        return redirect(f"{django_settings.FORCE_SCRIPT_NAME}/{lang}{url}")
     return redirect(f"/{lang}{url}")
 
 
