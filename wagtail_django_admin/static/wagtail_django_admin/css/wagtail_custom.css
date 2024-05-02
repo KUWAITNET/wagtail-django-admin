@@ -1,3 +1,10 @@
+:lang(ar) {
+    .dropdown .dropdown-toggle {
+        left: 0;
+        right: auto;
+    }
+}
+
 /* here goes improvement for the list of dates on news page, I preferrably think this fits for every same block */
 .toplinks li {
     display: inline-block;
@@ -5,6 +12,7 @@
     cursor: pointer;
     margin-bottom: 0.25rem;
 }
+
 .toplinks li a {
     padding: 0.42857rem 0.71429rem;
     background-color: rgb(196, 233, 235);
@@ -14,17 +22,23 @@
 }
 
 .result-list {
-    overflow-x: scroll; 
-    overflow-y:hidden;
+    overflow-x: scroll;
+    overflow-y: hidden;
 }
 
 #top-horizontal-scroller-wrapper {
     border: none 0px RED;
-    overflow-x: scroll; 
-    overflow-y:hidden;
+    overflow-x: scroll;
+    overflow-y: hidden;
 }
-#top-horizontal-scroller-wrapper{height: 20px; }
-#top-horizontal-scroller {height: 20px; }
+
+#top-horizontal-scroller-wrapper {
+    height: 20px;
+}
+
+#top-horizontal-scroller {
+    height: 20px;
+}
 
 .listing .actions {
     visibility: visible;
@@ -36,27 +50,37 @@
 
 /* The Modal (background) */
 #confirm_action_modal.modal {
-    display: none; /* Hidden by default */
-    position: fixed; /* Stay in place */
-    z-index: 1; /* Sit on top */
+    display: none;
+    /* Hidden by default */
+    position: fixed;
+    /* Stay in place */
+    z-index: 1;
+    /* Sit on top */
     left: 0;
     top: 0;
-    width: 100%; /* Full width */
-    height: 100%; /* Full height */
-    overflow: auto; /* Enable scroll if needed */
-    background-color: rgb(0,0,0); /* Fallback color */
-    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+    width: 100%;
+    /* Full width */
+    height: 100%;
+    /* Full height */
+    overflow: auto;
+    /* Enable scroll if needed */
+    background-color: rgb(0, 0, 0);
+    /* Fallback color */
+    background-color: rgba(0, 0, 0, 0.4);
+    /* Black w/ opacity */
 }
-    
+
 /* Modal Content/Box */
 #confirm_action_modal .modal-content {
     background-color: #fefefe;
-    margin: 15% auto; /* 15% from the top and centered */
+    margin: 15% auto;
+    /* 15% from the top and centered */
     padding: 20px;
     border: 1px solid #888;
-    width: 30%; /* Could be more or less, depending on screen size */
+    width: 30%;
+    /* Could be more or less, depending on screen size */
 }
-    
+
 /* The Close Button */
 .close {
     color: #aaa;
@@ -64,14 +88,14 @@
     font-size: 28px;
     font-weight: bold;
 }
-    
+
 .close:hover,
 .close:focus {
     color: black;
     text-decoration: none;
     cursor: pointer;
 }
-    
+
 #confirmAction {
     display: inline-grid;
     cursor: pointer;
