@@ -11,13 +11,15 @@ function insertAfter(newNode, existingNode) {
 }
 function addSideMenuElement(id, icon, content, href) {
     let sidbarSearch = $('form[role="search"]')[0];
+    let sidebarinner = $(".sidebar-custom-branding")[0];
 
     let newSideMenulement = createElementFromHTML(`<a id="${id}" class="sidebar-menu-item__link ">${icon}<span class="menuitem-label">${content}</span></a>`)
     newSideMenulement.href = href;
     let liElement = document.createElement('li');
     liElement.classList.add('sidebar-menu-item')
     liElement.appendChild(newSideMenulement);
-    insertAfter(liElement, sidbarSearch);
+    insertAfter(liElement, sidebarinner);
+    {% comment %} insertAfter(liElement, sidbarSearch); {% endcomment %}
 }
 addEventListener("DOMContentLoaded", (event) => {
     changeLangElementID = 'change-lang';

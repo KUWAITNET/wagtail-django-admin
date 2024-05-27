@@ -29,8 +29,7 @@ def lang_switcher_view(request):
     lang = list(filter(lambda lang: lang[0] != curr_lang, WAGTAIL_ADMIN_LANGUAGES))[0][
         0
     ]
-
-    user_profile = UserProfile.objects.get(user=request.user)
+    user_profile, _ = UserProfile.objects.get_or_create(user=request.user)
     user_profile.preferred_language = lang
     user_profile.save()
     request.session[translation.LANGUAGE_SESSION_KEY] = lang
