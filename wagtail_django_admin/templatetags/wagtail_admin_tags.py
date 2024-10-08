@@ -81,9 +81,9 @@ def correct_i18n(url, lang_code):
         url = url[len(settings.FORCE_SCRIPT_NAME):]
 
     if settings.USE_I18N:
-        url_lang = url.split("/")[0] if url.split("/") else None
+        url_lang = url.split("/")[1] if url.split("/") else None
         if url_lang and url_lang in LANGUAGES:
-            new_url = "/".join([url_lang] + url.split("/")[1:])
+            new_url = "/" + "/".join([lang_code] + url.split("/")[2:])
         else:
             new_url = url
 
