@@ -60,3 +60,12 @@ More advanced option if you want to control the order and icon_name
 .. code:: python
 
    path("^wagtail_django_admin/", include("wagtail_django_admin.urls", "wagtail_django_admin")),
+
+4. In ``settings.py`` add the following middleware:
+
+.. code:: python
+
+   MIDDLEWARE = [
+      ...
+      "wagtail_django_admin.middleware.WagtailDjangoAdminLanguageMiddleware",
+   ]
