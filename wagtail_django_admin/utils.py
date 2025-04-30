@@ -22,7 +22,16 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib.admin.views.main import ERROR_FLAG
 from django.template.response import SimpleTemplateResponse
 
-from wagtail.contrib.modeladmin.views import IndexView
+try:
+    from wagtail.contrib.modeladmin.views import IndexView
+    have_index_view = True
+except ImportError:  # To support wagtail 6
+    try:
+        from wagtail_modeladmin.views import IndexView  # type: ignore  # noqa: PGH003
+        have_index_view = True
+    except ImportError:
+        have_index_view = False
+
 from wagtail.search.backends import get_search_backend
 
 
@@ -251,122 +260,122 @@ def get_model_queryset(admin_site, model, request, preserved_filters=None):
 
     return queryset
 
+if have_index_view:
+    class DateFilterIndexViewMixin(IndexView):
+        """
+        This View is ordered to create links to years for the years.
+        """
 
-class DateFilterIndexViewMixin(IndexView):
-    """
-    This View is ordered to create links to years for the years.
-    """
+        def get_template_names(self):
+            return "modeladmin/admin/index_date_filter.html"
 
-    def get_template_names(self):
-        return "modeladmin/admin/index_date_filter.html"
+        def get_context_data(self, **kwargs):
+            data = super().get_context_data(**kwargs)
+            field_name = (
+                self.model_admin.date_hierarchy
+                if hasattr(self.model_admin, "date_hierarchy")
+                and self.model_admin.date_hierarchy
+                else None
+            )
+            if field_name:
+                data["field"] = field_name
 
-    def get_context_data(self, **kwargs):
-        data = super().get_context_data(**kwargs)
-        field_name = (
-            self.model_admin.date_hierarchy
-            if hasattr(self.model_admin, "date_hierarchy")
-            and self.model_admin.date_hierarchy
-            else None
-        )
-        if field_name:
-            data["field"] = field_name
-
-            year = self.request.GET.get(f"{field_name}__year", None)
-            if not year:
-                year = self.request.GET.get(field_name, None)
-            month = self.request.GET.get(f"{field_name}__month", None)
-            month = int(month) if month else month
-            day = self.request.GET.get(f"{field_name}__day", None)
-
-            if month:
-                data["month_select"] = calendar.month_name[month]
-
-            search_backend = get_search_backend()
-
-            if isinstance(self.get_queryset(), type(search_backend)):
-                results = self.get_queryset().results()
-
-                # if provided field is not a date
-                if results and not isinstance(
-                    getattr(results[0], field_name), datetime
-                ):
-                    return data
+                year = self.request.GET.get(f"{field_name}__year", None)
+                if not year:
+                    year = self.request.GET.get(field_name, None)
+                month = self.request.GET.get(f"{field_name}__month", None)
+                month = int(month) if month else month
+                day = self.request.GET.get(f"{field_name}__day", None)
 
                 if month:
-                    data["days"] = list(
-                        set([getattr(result, field_name).day for result in results])
-                    )
-                elif year:
-                    data["months"] = list(
-                        set(
-                            [
-                                (
-                                    getattr(result, field_name).month,
-                                    getattr(result, field_name).strftime("%B"),
-                                )
-                                for result in results
-                            ]
-                        )
-                    )
-                else:
-                    data["years"] = list(
-                        set([getattr(result, field_name).year for result in results])
-                    )
+                    data["month_select"] = calendar.month_name[month]
 
-            else:
+                search_backend = get_search_backend()
 
-                # if provided field is not a date
-                if field_name == "year":
-                    data["years"] = list(
-                        set(self.get_queryset().values_list("year", flat=True))
-                    )
-                else:
-                    try:
-                        self.get_queryset().dates(field_name, "year")
-                    except AssertionError:
+                if isinstance(self.get_queryset(), type(search_backend)):
+                    results = self.get_queryset().results()
+
+                    # if provided field is not a date
+                    if results and not isinstance(
+                        getattr(results[0], field_name), datetime
+                    ):
                         return data
 
                     if month:
-                        keywords_args = {
-                            f"{field_name}__year": year,
-                            f"{field_name}__month": month,
-                        }
-                        data["days"] = [
-                            date.day
-                            for date in self.get_queryset()
-                            .filter(**keywords_args)
-                            .dates(field_name, "day")
-                        ]
+                        data["days"] = list(
+                            set([getattr(result, field_name).day for result in results])
+                        )
                     elif year:
-                        keywords_args = {
-                            f"{field_name}__year": year,
-                        }
-                        data["months"] = [
-                            (date.month, date.strftime("%B"))
-                            for date in self.get_queryset()
-                            .filter(**keywords_args)
-                            .dates(field_name, "month")
-                        ]
+                        data["months"] = list(
+                            set(
+                                [
+                                    (
+                                        getattr(result, field_name).month,
+                                        getattr(result, field_name).strftime("%B"),
+                                    )
+                                    for result in results
+                                ]
+                            )
+                        )
                     else:
-                        data["years"] = [
-                            date.year
-                            for date in self.get_queryset().dates(field_name, "year")
-                        ]
+                        data["years"] = list(
+                            set([getattr(result, field_name).year for result in results])
+                        )
 
-            [  # sorting all the things in descending order
-                data[field].sort(key=lambda x: -x)
-                if not data[field] or not isinstance(data[field][0], tuple)
-                else data[field].sort(key=lambda x: -x[0])
-                for field in data
-                if field in ["days", "months", "years"]
-            ]
-            data["current_year"] = year
-            data["current_month"] = month
-            data["current_day"] = day
+                else:
 
-        opts = self.model._meta
-        data["opts"] = opts
-        return data
+                    # if provided field is not a date
+                    if field_name == "year":
+                        data["years"] = list(
+                            set(self.get_queryset().values_list("year", flat=True))
+                        )
+                    else:
+                        try:
+                            self.get_queryset().dates(field_name, "year")
+                        except AssertionError:
+                            return data
+
+                        if month:
+                            keywords_args = {
+                                f"{field_name}__year": year,
+                                f"{field_name}__month": month,
+                            }
+                            data["days"] = [
+                                date.day
+                                for date in self.get_queryset()
+                                .filter(**keywords_args)
+                                .dates(field_name, "day")
+                            ]
+                        elif year:
+                            keywords_args = {
+                                f"{field_name}__year": year,
+                            }
+                            data["months"] = [
+                                (date.month, date.strftime("%B"))
+                                for date in self.get_queryset()
+                                .filter(**keywords_args)
+                                .dates(field_name, "month")
+                            ]
+                        else:
+                            data["years"] = [
+                                date.year
+                                for date in self.get_queryset().dates(field_name, "year")
+                            ]
+
+                [  # sorting all the things in descending order
+                    data[field].sort(key=lambda x: -x)
+                    if not data[field] or not isinstance(data[field][0], tuple)
+                    else data[field].sort(key=lambda x: -x[0])
+                    for field in data
+                    if field in ["days", "months", "years"]
+                ]
+                data["current_year"] = year
+                data["current_month"] = month
+                data["current_day"] = day
+
+            opts = self.model._meta
+            data["opts"] = opts
+            return data
 
 
 class ActionDateFilterAdminMixin:
