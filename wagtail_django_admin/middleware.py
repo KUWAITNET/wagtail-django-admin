@@ -22,7 +22,7 @@ class WagtailDjangoAdminLanguageMiddleware(MiddlewareMixin):
         
         # Check if we're in the wagtail admin area
 
-        if view_name in ["wagtailadmin_home", "wagtail_django_admin",] or view_name.startswith("admin:") or "_modeladmin_" in view_name or view_name.startswith("wagtailadmin"):
+        if view_name in ["wagtailadmin_home", "wagtail_django_admin",] or view_name.startswith("admin:") or "_modeladmin_" in view_name or view_name.startswith("wagtail"):
             # Get the language from the URL if present
             path_parts = request.path.split('/')
             if len(path_parts) > 2 and path_parts[1] in [lang[0] for lang in settings.LANGUAGES]:
